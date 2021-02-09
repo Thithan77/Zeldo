@@ -16,48 +16,40 @@ except:
 fen = pygame.display.set_mode((options["fen"]["width"], options["fen"]["height"])) # On définit la fenêtre à la taille indiquée dans le fichier config
 clock = pygame.time.Clock() # la clock qui permet de gérer les FPS (stonks)
 from init import *
-font = pygame.font.SysFont(None, 24)
+font = pygame.font.SysFont(None, 24) # On charge la police d'écriture
 playing = True
-map = json.loads(open("map.json",'r').read())
+map = json.loads(open("map.json",'r').read()) # on charge la map depuis le fichier
 player = pl.Player() # On initalise le joueur
-while playing:
+xspeed,yspeed = 0,0
+while playing: # tant que le joueur joue on continue la boucle du jeu
     fen.fill((255,255,255))
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+    speed = Tile.tiles[map[int(player.x)][int(player.y)]].speed
+    for event in pygame.event.get(): # les évènements
+        if event.type == pygame.QUIT: # croix rouge
             playing = False
-        if event.type == pygame.KEYDOWN:
+        if event.type == pygame.KEYDOWN: # Touche pressée
+            if event.key == K_z:
+                yspeed = -1
+            if event.key == K_s:
+                yspeed = 1
+            if event.key == K_q:
+                xspeed = -1
+            if event.key == K_d:
+                xspeed = 1
+        if event.type == pygame.KEYUP: # Touche pressée
             speed = Tile.tiles[map[int(player.x)][int(player.y)]].speed
             if event.key == K_z:
-                player.y-=speed
+                yspeed = 0
             if event.key == K_s:
-                player.y+=speed
+                yspeed = 0
             if event.key == K_q:
-                player.x-=speed
+                xspeed = 0
             if event.key == K_d:
-                player.x+=speed
+                xspeed = 0
+    player.x+=xspeed*speed
+    player.y+=yspeed*speed
     col = int(options["fen"]["height"]//32+3)
     lin = int(options["fen"]["width"]//32+3)
-    """
-    x0 = player.x*32-(options["fen"]["width"]/2)
-    y0 = player.y*32-(options["fen"]["height"]/2)
-    x = x0
-    y = y0
-    for i in range(col):
-        yc = y%32 # Le décalage entre le joueur et le quadrillage
-        for j in range(lin):
-            xc = x%32 # Le décalage entre le joueur et le quadrillage
-            #print("{}/{}".format(j*32-xc,i*32-yc))
-            xr = x+(options["fen"]["width"]/2)-xc
-            yr = y+(options["fen"]["height"]/2)-yc
-            if(xr//32 < 0 or yr//32<0):
-                #fen.blit(Tile.tiles[Tile.nameToNumber["vide"]].texture,(j*32-xc,i*32-yc))
-                pass
-            else:
-                fen.blit(Tile.tiles[map[int(xr//32)][int(yr//32)]].texture,(j*32-xc,i*32-yc))
-            x+=32
-        y+=32
-        x = x0
-    """
     xmin = player.x*32-(options["fen"]["width"]/2)+32
     ymin = player.y*32-(options["fen"]["height"]/2)+32
     x = xmin
@@ -77,10 +69,7 @@ while playing:
             x+=32
         x = xmin
         y+=32
-    #pygame.draw.rect(fen,(255,0,0),(options["fen"]["width"]/2-12,options["fen"]["height"]/2-12,24,24))
     fen.blit(player.texture,(options["fen"]["width"]/2-16,options["fen"]["height"]/2-16))
-    #pygame.draw.rect(fen,(255,0,0),(0,options["fen"]["height"]/2,options["fen"]["width"],1))
-    #pygame.draw.rect(fen,(255,0,0),(options["fen"]["width"]/2,0,1,options["fen"]["height"]))
     img = font.render('VERSION ALPHA - MMORPG - Projet NSI', True, (255,255,255))
     fen.blit(img, (20, 32))
     img = font.render('PosX: {}'.format(player.x), True, (255,255,255))
