@@ -1,4 +1,4 @@
-# PROJET de Thibaut , léo et Loïc 
+# PROJET de Thibaut , Léo et Loïc 
 ## Jeu de survie (du bled)
 
 Modules:
