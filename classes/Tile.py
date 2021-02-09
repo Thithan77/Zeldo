@@ -19,6 +19,10 @@ class Tile:
             self.speed = opt["speed"]
         else:
             self.speed = 0.1
+        if("type" in opt): # Le bloc est-il traversable ?
+            self.type = opt["type"]
+        else:
+            self.type = "map"
         if("fileName" in opt):
             self.texture2 = pygame.image.load("assets\\"+opt["fileName"]).convert_alpha()
             self.texture2.set_colorkey((255,255,255))

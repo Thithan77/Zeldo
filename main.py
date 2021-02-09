@@ -1,13 +1,16 @@
 #coding:utf-8
 import pygame # import de pygame
+import tkinter
 from pygame.locals import * # import des constantes de Pygame comme QUIT
 from classes.bordel import * # On importe la libairie perso bordel (ya des trucs bordels dedans)
 import os; # Plein de fonctions sytèmes utiles (geta)
 pygame.init() # Initialisation de pygame
-pygame.key.set_repeat(10, 16) # set_repeat(délais avant de repêter une touche,délais entre chaque répétition)
+#pygame.key.set_repeat(10, 16) # set_repeat(délais avant de repêter une touche,délais entre chaque répétition)
 import json # On importe la librairie json pour pouvoir utiliser des fichiers au format JSON
 from math import *
 import classes.player as pl# On importe la classe qui gère le joueur
+from functools import partial
+id = [0]
 try:
     options = json.loads(open("config.json",'r').read()) # On importe le fichier json sous forme d'un objet
 except:
@@ -18,19 +21,24 @@ clock = pygame.time.Clock() # la clock qui permet de gérer les FPS (stonks)
 from init import *
 font = pygame.font.SysFont(None, 24) # On charge la police d'écriture
 playing = True
-map = json.loads(open("map.json",'r').read()) # on charge la map depuis le fichier
+editorActivated = False
+map,surmap = json.loads(open("map.json",'r').read()) # on charge la map depuis le fichier
 player = pl.Player() # On initalise le joueur
-surmap = []
-for i in range(100):
-    surmap.append([])
-    for j in range(100):
-        surmap[i].append(Tile.nameToNumber["nada"])
 surmap[6][6] = 4
 xspeed,yspeed = 0,0
 while playing: # tant que le joueur joue on continue la boucle du jeu
     fen.fill((255,255,255))
     speed = Tile.tiles[map[int(player.x)][int(player.y)]].speed
     for event in pygame.event.get(): # les évènements
+        if event.type == pygame.MOUSEBUTTONUP:
+            if(editorActivated):
+                x,y = pygame.mouse.get_pos()
+                rx = (x-(options["fen"]["width"]/2)+player.x*32)//32
+                ry = (y-(options["fen"]["height"]/2)+player.y*32)//32
+                if(Tile.tiles[id[0]].type == "surmap"):
+                    surmap[int(rx)][int(ry)] = id[0]
+                else:
+                    map[int(rx)][int(ry)] = id[0]
         if event.type == pygame.QUIT: # croix rouge
             playing = False
         if event.type == pygame.KEYDOWN: # Touche pressée
@@ -42,6 +50,18 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                 xspeed = -1
             if event.key == K_d:
                 xspeed = 1
+            if event.key == K_g:
+                jzon = open("map.json",'w')
+                maps = [map,surmap]
+                jzon.write(json.dumps(maps))
+                print("Saved !")
+            if event.key == K_y:
+                editorActivated = True
+                tk = tkinter.Tk()
+                for j in Tile.tiles:
+                    bouton = tkinter.Button(tk,text=j.name,command=partial(editor,j.id,tk,id))
+                    bouton.pack()
+                tk.mainloop()
         if event.type == pygame.KEYUP: # Touche pressée
             speed = Tile.tiles[map[int(player.x)][int(player.y)]].speed
             if event.key == K_z:
