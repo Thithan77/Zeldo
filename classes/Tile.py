@@ -20,9 +20,13 @@ class Tile:
         else:
             self.speed = 0.1
         if("fileName" in opt):
-            self.texture = pygame.image.load("assets\\"+opt["fileName"]).convert_alpha()
+            self.texture2 = pygame.image.load("assets\\"+opt["fileName"]).convert_alpha()
+            self.texture2.set_colorkey((255,255,255))
+            self.texture = pygame.Surface((32,32)).convert_alpha()
+            self.texture.fill((0,0,0,0))
+            self.texture.blit(self.texture2,(0,0))
         else:
-            self.texture = pygame.image.load("assets\\gazon.png").convert_alpha()
+            self.texture = pygame.Surface((32,32)).fill((255,255,255))
     def toString(self): # Renvoie toutes les informations sous forme de texte (pour le débug principalement)
         return("{} , id:{}".format(self.name,self.id))
 

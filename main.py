@@ -20,6 +20,12 @@ font = pygame.font.SysFont(None, 24) # On charge la police d'écriture
 playing = True
 map = json.loads(open("map.json",'r').read()) # on charge la map depuis le fichier
 player = pl.Player() # On initalise le joueur
+surmap = []
+for i in range(100):
+    surmap.append([])
+    for j in range(100):
+        surmap[i].append(Tile.nameToNumber["nada"])
+surmap[6][6] = 4
 xspeed,yspeed = 0,0
 while playing: # tant que le joueur joue on continue la boucle du jeu
     fen.fill((255,255,255))
@@ -46,8 +52,14 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                 xspeed = 0
             if event.key == K_d:
                 xspeed = 0
-    player.x+=xspeed*speed
-    player.y+=yspeed*speed
+    if(xspeed == 1 and Tile.tiles[surmap[int((player.x*32+10)//32)][int(floor(player.y))]].doPass):
+        player.x+=xspeed*speed
+    if(xspeed == -1 and Tile.tiles[surmap[int((player.x*32-10)//32)][int(floor(player.y))]].doPass):
+        player.x+=xspeed*speed
+    if(yspeed == 1 and Tile.tiles[surmap[int(floor(player.x))][int((player.y*32+10)//32)]].doPass):
+        player.y+=yspeed*speed
+    if(yspeed == -1 and Tile.tiles[surmap[int(floor(player.x))][int((player.y*32-10)//32)]].doPass):
+        player.y+=yspeed*speed
     col = int(options["fen"]["height"]//32+3)
     lin = int(options["fen"]["width"]//32+3)
     xmin = player.x*32-(options["fen"]["width"]/2)+32
@@ -64,8 +76,10 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                 yz = floor(y/32)
                 xz = floor(x/32)
                 texture = Tile.tiles[map[int(xz-1)][int(yz-1)]].texture
-                #texture = Tile.tiles[0].texture
                 fen.blit(texture,((j)*32-xc,(i)*32-yc))
+                if(Tile.tiles[surmap[int(xz-1)][int(yz-1)]].name != "nada"):
+                    texture = Tile.tiles[surmap[int(xz-1)][int(yz-1)]].texture
+                    fen.blit(texture,((j)*32-xc,(i)*32-yc))
             x+=32
         x = xmin
         y+=32
