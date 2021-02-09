@@ -1,1 +1,1 @@
-C:\Users\Loic\AppData\Local\Programs\Python\Python39\python main.py
+C:\Users\thith\AppData\Local\Programs\Python\Python38-32\python main.py

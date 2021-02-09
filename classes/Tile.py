@@ -15,6 +15,10 @@ class Tile:
             self.doPass = opt["doPass"]
         else:
             self.doPass = True
+        if("speed" in opt): # Le bloc est-il traversable ?
+            self.speed = opt["speed"]
+        else:
+            self.speed = 0.1
         if("fileName" in opt):
             self.texture = pygame.image.load("assets\\"+opt["fileName"]).convert_alpha()
         else:

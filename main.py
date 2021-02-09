@@ -26,14 +26,15 @@ while playing:
         if event.type == pygame.QUIT:
             playing = False
         if event.type == pygame.KEYDOWN:
+            speed = Tile.tiles[map[int(player.x)][int(player.y)]].speed
             if event.key == K_z:
-                player.y-=0.1
+                player.y-=speed
             if event.key == K_s:
-                player.y+=0.1
+                player.y+=speed
             if event.key == K_q:
-                player.x-=0.1
+                player.x-=speed
             if event.key == K_d:
-                player.x+=0.1
+                player.x+=speed
     col = int(options["fen"]["height"]//32+3)
     lin = int(options["fen"]["width"]//32+3)
     """
