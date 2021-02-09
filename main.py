@@ -79,7 +79,8 @@ while playing:
             x+=32
         x = xmin
         y+=32
-    pygame.draw.rect(fen,(255,0,0),(options["fen"]["width"]/2-12,options["fen"]["height"]/2-12,24,24))
+    #pygame.draw.rect(fen,(255,0,0),(options["fen"]["width"]/2-12,options["fen"]["height"]/2-12,24,24))
+    fen.blit(player.texture,(options["fen"]["width"]/2-16,options["fen"]["height"]/2-16))
     #pygame.draw.rect(fen,(255,0,0),(0,options["fen"]["height"]/2,options["fen"]["width"],1))
     #pygame.draw.rect(fen,(255,0,0),(options["fen"]["width"]/2,0,1,options["fen"]["height"]))
     img = font.render('VERSION ALPHA - MMORPG - Projet NSI', True, (255,255,255))
