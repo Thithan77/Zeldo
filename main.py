@@ -18,10 +18,7 @@ clock = pygame.time.Clock() # la clock qui permet de gérer les FPS (stonks)
 from init import *
 font = pygame.font.SysFont(None, 24)
 playing = True
-map = []
-for i in range(100):
-    map.append([0]*100)
-map[1][1] = 1
+map = json.loads(open("map.json",'r').read())
 player = pl.Player() # On initalise le joueur
 while playing:
     fen.fill((255,255,255))
@@ -68,7 +65,7 @@ while playing:
         yc = y%32
         for j in range(lin):
             xc = x%32
-            if(floor(x/32) <= 0 or floor(y/32) <= 0):
+            if(floor(x/32) <= 0 or floor(y/32) <= 0 or floor(x/32) >= 100 or floor(y/32) >= 100):
                 fen.blit(Tile.tiles[Tile.nameToNumber["vide"]].texture,(j*32-xc,i*32-yc))
             else:
                 yz = floor(y/32)
