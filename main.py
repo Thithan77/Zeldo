@@ -72,13 +72,13 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                 xspeed = 0
             if event.key == K_d:
                 xspeed = 0
-    if(xspeed == 1 and Tile.tiles[surmap[int((player.x*32+10)//32)][int(floor(player.y))]].doPass):
+    if(xspeed == 1 and Tile.tiles[surmap[int((player.x*32+10)//32)][int(floor(player.y))]].doPass and Tile.tiles[map[int((player.x*32+10)//32)][int(floor(player.y))]].doPass):
         player.x+=xspeed*speed
-    if(xspeed == -1 and Tile.tiles[surmap[int((player.x*32-10)//32)][int(floor(player.y))]].doPass):
+    if(xspeed == -1 and Tile.tiles[surmap[int((player.x*32-10)//32)][int(floor(player.y))]].doPass and Tile.tiles[map[int((player.x*32-10)//32)][int(floor(player.y))]].doPass):
         player.x+=xspeed*speed
-    if(yspeed == 1 and Tile.tiles[surmap[int(floor(player.x))][int((player.y*32+10)//32)]].doPass):
+    if(yspeed == 1 and Tile.tiles[surmap[int(floor(player.x))][int((player.y*32+10)//32)]].doPass and Tile.tiles[map[int(floor(player.x))][int((player.y*32+10)//32)]].doPass):
         player.y+=yspeed*speed
-    if(yspeed == -1 and Tile.tiles[surmap[int(floor(player.x))][int((player.y*32-10)//32)]].doPass):
+    if(yspeed == -1 and Tile.tiles[surmap[int(floor(player.x))][int((player.y*32-10)//32)]].doPass and Tile.tiles[map[int(floor(player.x))][int((player.y*32-10)//32)]].doPass):
         player.y+=yspeed*speed
     col = int(options["fen"]["height"]//32+3)
     lin = int(options["fen"]["width"]//32+3)
