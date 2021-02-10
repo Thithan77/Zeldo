@@ -15,16 +15,20 @@ class Tile:
             self.doPass = opt["doPass"]
         else:
             self.doPass = True
-        if("speed" in opt): # Le bloc est-il traversable ?
+        if("speed" in opt): # la vitesse du personnage entre 0 et 1
             self.speed = opt["speed"]
         else:
             self.speed = 0.1
+        if("type" in opt): # Le bloc est-il dans le fond ou au devant
+            self.type = opt["type"]
+        else:
+            self.type = "map"
         if("fileName" in opt):
             self.texture2 = pygame.image.load("assets\\"+opt["fileName"]).convert_alpha()
             self.texture2.set_colorkey((255,255,255))
             self.texture = pygame.Surface((32,32)).convert_alpha()
             self.texture.fill((0,0,0,0))
-            self.texture.blit(self.texture2,(0,0))
+            self.texture.blit(self.texture2,(0,0,32,32))
         else:
             self.texture = pygame.Surface((32,32)).fill((255,255,255))
     def toString(self): # Renvoie toutes les informations sous forme de texte (pour le débug principalement)
