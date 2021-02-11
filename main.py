@@ -107,7 +107,7 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
         for j in range(lin):
             xc = x%32
             if(floor(x/32) <= 0 or floor(y/32) <= 0 or floor(x/32) >= 200 or floor(y/32) >= 200):
-                fen.blit(Tile.tiles[Tile.nameToNumber["vide"]].texture,(j*32-xc,i*32-yc))
+                fen.blit(Tile.tiles[Tile.nameToNumber["darkeau"]].texture,(j*32-xc,i*32-yc))
             else:
                 yz = floor(y/32)
                 xz = floor(x/32)
