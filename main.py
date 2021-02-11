@@ -22,6 +22,22 @@ from init import *
 font = pygame.font.SysFont(None, 24) # On charge la police d'écriture
 playing = True
 editorActivated = False
+"""
+map = []
+for i in range(200):
+    map.append([])
+    for j in range(200):
+        map[i].append(0)
+surmap = []
+for i in range(200):
+    surmap.append([])
+    for j in range(200):
+        surmap[i].append(5)
+jzon = open("map.json",'w')
+maps = [map,surmap]
+jzon.write(json.dumps(maps))
+print("Saved !")
+"""
 map,surmap = json.loads(open("map.json",'r').read()) # on charge la map depuis le fichier
 player = pl.Player() # On initalise le joueur
 surmap[6][6] = 4
@@ -90,7 +106,7 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
         yc = y%32
         for j in range(lin):
             xc = x%32
-            if(floor(x/32) <= 0 or floor(y/32) <= 0 or floor(x/32) >= 100 or floor(y/32) >= 100):
+            if(floor(x/32) <= 0 or floor(y/32) <= 0 or floor(x/32) >= 200 or floor(y/32) >= 200):
                 fen.blit(Tile.tiles[Tile.nameToNumber["vide"]].texture,(j*32-xc,i*32-yc))
             else:
                 yz = floor(y/32)
