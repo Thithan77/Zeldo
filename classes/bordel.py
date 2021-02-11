@@ -5,7 +5,7 @@ def editor(ide,tk,tab):
     tk.destroy()
     tab[0] = ide
     editorActivated = True
-def next(tk,page,tiles):
+def next(tk,page,tiles,id):
     page+=1
     tk.destroy()
     tk = tkinter.Tk()
@@ -15,7 +15,7 @@ def next(tk,page,tiles):
     tkinter.Button(tk,text="Page suivante",command=partial(next,tk,page,tiles)).pack()
     tkinter.Button(tk,text="Page précédente",command=partial(past,tk,page,tiles)).pack()
     tk.mainloop()
-def past(tk,page,tiles):
+def past(tk,page,tiles,id):
     if(page != 0):
         page-=1
         tk.destroy()

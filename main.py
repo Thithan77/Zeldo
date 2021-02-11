@@ -47,9 +47,11 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
     speed = Tile.tiles[map[int(player.x)][int(player.y)]].speed
     for event in pygame.event.get(): # les évènements
         if event.type == pygame.MOUSEBUTTONUP:
-            editor_click = False
+            if(event.button == 2):
+                editor_click = False
         if event.type == pygame.MOUSEBUTTONDOWN:
-            editor_click = True
+            if(event.button == 2):
+                editor_click = True
         if event.type == pygame.QUIT: # croix rouge
             playing = False
         if event.type == pygame.KEYDOWN: # Touche pressée
@@ -73,8 +75,8 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                 for j in Tile.tiles[:10]:
                     bouton = tkinter.Button(tk,text=j.name,command=partial(editor,j.id,tk,id))
                     bouton.pack()
-                tkinter.Button(tk,text="Page suivante",command=partial(next,tk,page,Tile.tiles)).pack()
-                tkinter.Button(tk,text="Page précédente",command=partial(past,tk,page,Tile.tiles)).pack()
+                tkinter.Button(tk,text="Page suivante",command=partial(next,tk,page,Tile.tiles,id)).pack()
+                tkinter.Button(tk,text="Page précédente",command=partial(past,tk,page,Tile.tiles,id)).pack()
                 tk.mainloop()
             if event.key == K_r:
                 for i,j in enumerate(Tile.tiles):
