@@ -1,0 +1,5 @@
+name : "sable+Eau (SW)"
+fileName : "sablesw.png"
+doPass : true
+speed : 0.075
+type : "map"

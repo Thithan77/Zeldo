@@ -1,0 +1,5 @@
+name : "Eau+Sable (NE)"
+fileName : "eaune.png"
+doPass : true
+speed : 0.05
+type : "map"
