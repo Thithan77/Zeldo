@@ -1,0 +1,5 @@
+name : "sable"
+fileName: "sable.png"
+doPass : true
+speed : 0.075
+type: "map"

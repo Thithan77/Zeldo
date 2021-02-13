@@ -23,6 +23,7 @@ font = pygame.font.SysFont(None, 24) # On charge la police d'écriture
 playing = True
 editor_click = False
 editorActivated = False
+noclip = False
 """
 map = []
 for i in range(200):
@@ -39,7 +40,23 @@ maps = [map,surmap]
 jzon.write(json.dumps(maps))
 print("Saved !")
 """
-map,surmap = json.loads(open("map.json",'r').read()) # on charge la map depuis le fichier
+conversion,map,surmap = json.loads(open("map.json",'r').read()) # on charge la map depuis le fichier
+toConvert = {}
+needConvert = False
+for i in conversion:
+    if(Tile.tiles[Tile.nameToNumber[i["name"]]].id != i["id"]):
+        print("Convertion nécessaire de la map")
+        toConvert[i["id"]] = Tile.tiles[Tile.nameToNumber[i["name"]]].id
+        needConvert = True
+    else:
+        toConvert[i["id"]] = Tile.tiles[Tile.nameToNumber[i["name"]]].id
+if(needConvert):
+    for i,j in enumerate(map):
+        for k,l in enumerate(map[i]):
+            map[i][k] = toConvert[map[i][k]]
+    for i,j in enumerate(surmap):
+        for k,l in enumerate(surmap[i]):
+            surmap[i][k] = toConvert[surmap[i][k]]
 player = pl.Player() # On initalise le joueur
 xspeed,yspeed = 0,0
 while playing: # tant que le joueur joue on continue la boucle du jeu
@@ -63,9 +80,17 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                 xspeed = -1
             if event.key == K_d:
                 xspeed = 1
+            if event.key == K_k:
+                noclip = not noclip
             if event.key == K_g:
                 jzon = open("map.json",'w')
-                maps = [map,surmap]
+                conversion = []
+                for i in Tile.tiles:
+                    g = {}
+                    g["name"] = i.name
+                    g["id"] = i.id
+                    conversion.append(g)
+                maps = [conversion,map,surmap]
                 jzon.write(json.dumps(maps))
                 print("Saved !")
             if event.key == K_y:
@@ -97,14 +122,19 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                 xspeed = 0
             if event.key == K_d:
                 xspeed = 0
-    if(xspeed == 1 and Tile.tiles[surmap[int((player.x*32+10)//32)][int(floor(player.y))]].doPass and Tile.tiles[map[int((player.x*32+10)//32)][int(floor(player.y))]].doPass):
+    if(noclip):
         player.x+=xspeed*speed
-    if(xspeed == -1 and Tile.tiles[surmap[int((player.x*32-10)//32)][int(floor(player.y))]].doPass and Tile.tiles[map[int((player.x*32-10)//32)][int(floor(player.y))]].doPass):
-        player.x+=xspeed*speed
-    if(yspeed == 1 and Tile.tiles[surmap[int(floor(player.x))][int((player.y*32+10)//32)]].doPass and Tile.tiles[map[int(floor(player.x))][int((player.y*32+10)//32)]].doPass):
         player.y+=yspeed*speed
-    if(yspeed == -1 and Tile.tiles[surmap[int(floor(player.x))][int((player.y*32-10)//32)]].doPass and Tile.tiles[map[int(floor(player.x))][int((player.y*32-10)//32)]].doPass):
-        player.y+=yspeed*speed
+        print(Tile.tiles[map[int((player.x*32+10)//32)][int(floor(player.y))]].doPass,Tile.tiles[surmap[int((player.x*32+10)//32)][int(floor(player.y))]].doPass)
+    else:
+        if(xspeed == 1 and Tile.tiles[surmap[int((player.x*32+10)//32)][int(floor(player.y))]].doPass and Tile.tiles[map[int((player.x*32+10)//32)][int(floor(player.y))]].doPass):
+            player.x+=xspeed*speed
+        if(xspeed == -1 and Tile.tiles[surmap[int((player.x*32-10)//32)][int(floor(player.y))]].doPass and Tile.tiles[map[int((player.x*32-10)//32)][int(floor(player.y))]].doPass):
+            player.x+=xspeed*speed
+        if(yspeed == 1 and Tile.tiles[surmap[int(floor(player.x))][int((player.y*32+10)//32)]].doPass and Tile.tiles[map[int(floor(player.x))][int((player.y*32+10)//32)]].doPass):
+            player.y+=yspeed*speed
+        if(yspeed == -1 and Tile.tiles[surmap[int(floor(player.x))][int((player.y*32-10)//32)]].doPass and Tile.tiles[map[int(floor(player.x))][int((player.y*32-10)//32)]].doPass):
+            player.y+=yspeed*speed
     if(editorActivated and editor_click):
         x,y = pygame.mouse.get_pos()
         rx = (x-(options["fen"]["width"]/2)+player.x*32)//32
