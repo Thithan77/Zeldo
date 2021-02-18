@@ -203,7 +203,7 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
         x = xmin
         y+=32
     fen.blit(player.texture,(options["fen"]["width"]/2-16,options["fen"]["height"]/2-16))
-    #map.draw_others(fen,player,options)
+    map.draw_others(fen,player,options)
     img = font.render('VERSION ALPHA - MMORPG + EDITOR - Projet NSI', True, (255,255,255))
     fen.blit(img, (20, 32))
     img = font.render('PosX: {}'.format(player.x), True, (255,255,255))

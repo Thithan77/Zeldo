@@ -1,25 +1,26 @@
 import json
 import socket
 from _thread import *
+import time
 def threaded_map():
     while True:
         try:
             data = multiMap.socket.recv(2048*16).decode("utf-8")
+            print(data)
             if not data:
                 print("Disconnected")
                 break
             else:
                 data = json.loads(data)
-                print(data)
                 if(data[0] == "mod"):
                     if(data[1] == "map"):
                         multiMap.map[data[2]][data[3]] = data[4]
                     if(data[1] == "surmap"):
                         multiMap.surmap[data[2]][data[3]] = data[4]
-                """
                 elif(data[0] == "pos"):
+                    del multiMap.poses
                     multiMap.poses = data[1]
-                """
+                    print(data[1])
         except error as e:
             print(e)
 class Map:
@@ -85,9 +86,8 @@ class multiMap:
         multiMap.surmap[i][j] = val
     def draw_others(self,fen,player,options):
         multiMap.socket.send(json.dumps(("pos",player.x,player.y)).encode())
-        if(type(multiMap.poses) == "<class 'list'>"):
-            for i in multiMap.poses:
-                x = i[0]-player.x*32+options["fen"]["width"]/2
-                y = i[1]-player.y*32+options["fen"]["height"]/2
-                #print((x,y))
-                fen.blit(player.texture,x,y)
+        for i,j in enumerate(multiMap.poses):
+            x = (j[0]*32-player.x*32+options["fen"]["width"]/2)-16
+            y = (j[1]*32-player.y*32+options["fen"]["height"]/2)-16
+            print((x,y))
+            fen.blit(player.texture,(x,y))
