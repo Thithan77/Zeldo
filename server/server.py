@@ -44,7 +44,8 @@ def server_thread():
     global modifs
 
     while True:
-        time.sleep(0.1)
+        time.sleep(0.02)
+        print(clients)
         try:
             toSend = []
             uwu = modifs
