@@ -1,0 +1,93 @@
+import json
+import socket
+from _thread import *
+def threaded_map():
+    while True:
+        try:
+            data = multiMap.socket.recv(2048*16).decode("utf-8")
+            if not data:
+                print("Disconnected")
+                break
+            else:
+                data = json.loads(data)
+                print(data)
+                if(data[0] == "mod"):
+                    if(data[1] == "map"):
+                        multiMap.map[data[2]][data[3]] = data[4]
+                    if(data[1] == "surmap"):
+                        multiMap.surmap[data[2]][data[3]] = data[4]
+                """
+                elif(data[0] == "pos"):
+                    multiMap.poses = data[1]
+                """
+        except error as e:
+            print(e)
+class Map:
+    def __init__(self,Tile):
+        self.map = []
+        self.surmap = []
+        conversion,self.map,self.surmap = json.loads(open("map.json",'r').read()) # on charge la map depuis le fichier
+        toConvert = {}
+        needConvert = False
+        for i in conversion:
+            if(Tile.tiles[Tile.nameToNumber[i["name"]]].id != i["id"]):
+                print("Convertion nécessaire de la map")
+                toConvert[i["id"]] = Tile.tiles[Tile.nameToNumber[i["name"]]].id
+                needConvert = True
+            else:
+                toConvert[i["id"]] = Tile.tiles[Tile.nameToNumber[i["name"]]].id
+        if(needConvert):
+            for i,j in enumerate(self.map):
+                for k,l in enumerate(self.map[i]):
+                    self.map[i][k] = toConvert[self.map[i][k]//1]+self.map[i][k]%1
+            for i,j in enumerate(self.surmap):
+                for k,l in enumerate(self.surmap[i]):
+                    self.surmap[i][k] = toConvert[self.surmap[i][k]]
+    def gm(self,i,j):
+        xchunk = i//32
+        ychunk = j//32
+        return(self.map[i][j])
+    def gs(self,i,j):
+        xchunk = i//32
+        ychunk = j//32
+        return(self.surmap[i][j])
+    def modify(self,i,j,val):
+        self.map[i][j] = val
+    def surmodify(self,i,j,val):
+        self.surmap[i][j] = val
+    def draw_others(fen,player,options):
+        pass
+class multiMap:
+    socket
+    map = []
+    surmap = []
+    poses = []
+    def __init__(self,Tile):
+        multiMap.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        multiMap.socket.connect(("127.0.0.1",8081))
+        data = multiMap.socket.recv(2048*128).decode("utf-8")
+        conv,multiMap.map,multiMap.surmap = json.loads(data)
+        start_new_thread(threaded_map,())
+    def gm(self,i,j):
+        xchunk = i//32
+        ychunk = j//32
+        return(multiMap.map[i][j])
+    def gs(self,i,j):
+        xchunk = i//32
+        ychunk = j//32
+        return(multiMap.surmap[i][j])
+    def modify(self,i,j,val):
+        multiMap.map[i][j] = val
+        mod = ("mod","map",i,j,val)
+        p = json.dumps(mod).encode()
+        multiMap.socket.send(p)
+    def surmodify(self,i,j,val):
+        multiMap.surmap[i][j] = val
+    def draw_others(self,fen,player,options):
+        multiMap.socket.send(json.dumps(("pos",player.x,player.y)).encode())
+        if(type(multiMap.poses) == "<class 'list'>"):
+            for i in multiMap.poses:
+                x = i[0]-player.x*32+options["fen"]["width"]/2
+                y = i[1]-player.y*32+options["fen"]["height"]/2
+                #print((x,y))
+                fen.blit(player.texture,x,y)
