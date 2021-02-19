@@ -24,7 +24,7 @@ fen = pygame.display.set_mode((options["fen"]["width"], options["fen"]["height"]
 pygame.event.set_allowed([QUIT, KEYDOWN, KEYUP,MOUSEBUTTONUP,MOUSEBUTTONDOWN])
 clock = pygame.time.Clock() # la clock qui permet de gérer les FPS (stonks)
 from init import *
-if(sys.argv[1] == "multiplayer"):
+if(len(sys.argv) > 1 and sys.argv[1] == "multiplayer"):
     print("Mode multijoueur enclenché")
     map = cmap.multiMap(Tile)
 else:

@@ -6,6 +6,7 @@ def threaded_map():
     while True:
         try:
             data = multiMap.socket.recv(2048*16).decode("utf-8")
+            data = data.split("]]")[0] + "]]"
             print(data)
             if not data:
                 print("Disconnected")
@@ -56,7 +57,7 @@ class Map:
         self.map[i][j] = val
     def surmodify(self,i,j,val):
         self.surmap[i][j] = val
-    def draw_others(fen,player,options):
+    def draw_others(self,fen,player,options):
         pass
 class multiMap:
     socket
