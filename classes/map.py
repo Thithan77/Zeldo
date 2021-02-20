@@ -2,6 +2,8 @@ import json
 import socket
 from _thread import *
 import time
+from perlin_noise import PerlinNoise
+noise = PerlinNoise(octaves=0.1, seed=648325)
 def threaded_map():
     while True:
         try:
@@ -45,6 +47,18 @@ class Map:
             for i,j in enumerate(self.surmap):
                 for k,l in enumerate(self.surmap[i]):
                     self.surmap[i][k] = toConvert[self.surmap[i][k]]
+        for i in range(200):
+            for j in range(200):
+                self.surmap[i][j] = Tile.nameToNumber["nada"]
+                k = noise([i,j])
+                if(k < -0.25):
+                    self.map[i][j] = Tile.nameToNumber["eau"]
+                elif(k < -0.1):
+                    self.map[i][j] = Tile.nameToNumber["sable"]
+                else:
+                    self.map[i][j] = Tile.nameToNumber["gazon"]
+                if(k > 0.25):
+                    self.surmap[i][j] = Tile.nameToNumber["arbre"]
     def gm(self,i,j):
         xchunk = i//32
         ychunk = j//32
