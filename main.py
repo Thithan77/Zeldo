@@ -3,12 +3,15 @@ import pygame # import de pygame
 import tkinter
 from pygame.locals import * # import des constantes de Pygame comme QUIT
 from classes.bordel import * # On importe la libairie perso bordel (ya des trucs bordels dedans)
-import os; # Plein de fonctions sytèmes utiles (geta)
+import os # Plein de fonctions sytèmes utiles (geta)
+import sys
+import socket
 pygame.init() # Initialisation de pygame
 #pygame.key.set_repeat(10, 16) # set_repeat(délais avant de repêter une touche,délais entre chaque répétition)
 import json # On importe la librairie json pour pouvoir utiliser des fichiers au format JSON
 from math import *
 import classes.player as pl# On importe la classe qui gère le joueur
+import classes.map as cmap
 from functools import partial
 import time
 id = [0]
@@ -21,11 +24,17 @@ fen = pygame.display.set_mode((options["fen"]["width"], options["fen"]["height"]
 pygame.event.set_allowed([QUIT, KEYDOWN, KEYUP,MOUSEBUTTONUP,MOUSEBUTTONDOWN])
 clock = pygame.time.Clock() # la clock qui permet de gérer les FPS (stonks)
 from init import *
+if(len(sys.argv) > 1 and sys.argv[1] == "multiplayer"):
+    print("Mode multijoueur enclenché")
+    map = cmap.multiMap(Tile)
+else:
+    map = cmap.Map(Tile)
 font = pygame.font.SysFont(None, 24) # On charge la police d'écriture
 playing = True
 editor_click = False
 editorActivated = False
 noclip = False
+placetick = 0
 """
 map = []
 for i in range(200):
@@ -41,6 +50,7 @@ jzon = open("map.json",'w')
 maps = [map,surmap]
 jzon.write(json.dumps(maps))
 print("Saved !")
+"""
 """
 conversion,map,surmap = json.loads(open("map.json",'r').read()) # on charge la map depuis le fichier
 toConvert = {}
@@ -59,6 +69,7 @@ if(needConvert):
     for i,j in enumerate(surmap):
         for k,l in enumerate(surmap[i]):
             surmap[i][k] = toConvert[surmap[i][k]]
+"""
 player = pl.Player() # On initalise le joueur
 xspeed,yspeed = 0,0
 lastTime = time.time()
@@ -66,8 +77,9 @@ tot = 0
 n = 0
 while playing: # tant que le joueur joue on continue la boucle du jeu
     lastTime = time.time()
+    placetick +=1
     fen.fill((255,255,255))
-    speed = Tile.tiles[int(map[int(player.x)][int(player.y)]//1)].speed
+    speed = Tile.tiles[int(map.gm(int(player.x),int(player.y))//1)].speed
     for event in pygame.event.get(): # les évènements
         if event.type == pygame.MOUSEBUTTONUP:
             if(event.button == 2):
@@ -97,7 +109,7 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                     g["name"] = i.name
                     g["id"] = i.id
                     conversion.append(g)
-                maps = [conversion,map,surmap]
+                maps = [conversion,map.map,map.surmap]
                 jzon.write(json.dumps(maps))
                 print("Saved !")
             if event.key == K_o:
@@ -105,12 +117,12 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                     x,y = pygame.mouse.get_pos()
                     rx = (x-(options["fen"]["width"]/2)+player.x*32)//32
                     ry = (y-(options["fen"]["height"]/2)+player.y*32)//32
-                    rot = int(map[int(rx)][int(ry)]%1*10)
+                    rot = int(map.gm(int(rx),int(ry))%1*10)
                     print(rot+1)
                     if(rot == 3):
-                        map[int(rx)][int(ry)] -= 0.3
+                        map.modify(int(rx),int(ry),map.gm(int(rx),int(ry)) - 0.3)
                     else:
-                        map[int(rx)][int(ry)] += 0.1
+                        map.modify(int(rx),int(ry),map.gm(int(rx),int(ry)) + 0.1)
             if event.key == K_y:
                 editorActivated = True
                 tk = tkinter.Tk()
@@ -131,7 +143,7 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                         j.texture.blit(j.texture2,(0,0,32,32))
                         Tile.tiles[i] = j
         if event.type == pygame.KEYUP: # Touche pressée
-            speed = Tile.tiles[int(map[int(player.x)][int(player.y)]//1)].speed
+            speed = Tile.tiles[int(map.gm(int(player.x),int(player.y))//1)].speed
             if event.key == K_z:
                 yspeed = 0
             if event.key == K_s:
@@ -145,22 +157,22 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
         player.y+=yspeed*speed
         #print(Tile.tiles[map[int((player.x*32+10)//32)][int(floor(player.y))]].doPass,Tile.tiles[surmap[int((player.x*32+10)//32)][int(floor(player.y))]].doPass)
     else:
-        if(xspeed == 1 and Tile.tiles[int(surmap[int((player.x*32+10)//32)][int(floor(player.y))]//1)].doPass and Tile.tiles[int(map[int((player.x*32+10)//32)][int(floor(player.y))]//1)].doPass):
+        if(xspeed == 1 and Tile.tiles[int(map.gs(int((player.x*32+10)//32),int(floor(player.y)))//1)].doPass and Tile.tiles[int(map.gm(int((player.x*32+10)//32),int(floor(player.y)))//1)].doPass):
             player.x+=xspeed*speed
-        if(xspeed == -1 and Tile.tiles[int(surmap[int((player.x*32-10)//32)][int(floor(player.y))]//1)].doPass and Tile.tiles[int(map[int((player.x*32-10)//32)][int(floor(player.y))]//1)].doPass):
+        if(xspeed == -1 and Tile.tiles[int(map.gs(int((player.x*32-10)//32),int(floor(player.y)))//1)].doPass and Tile.tiles[int(map.gm(int((player.x*32-10)//32),int(floor(player.y)))//1)].doPass):
             player.x+=xspeed*speed
-        if(yspeed == 1 and Tile.tiles[int(surmap[int(floor(player.x))][int((player.y*32+10)//32)]//1)].doPass and Tile.tiles[int(map[int(floor(player.x))][int((player.y*32+10)//32)]//1)].doPass):
+        if(yspeed == 1 and Tile.tiles[int(map.gs(int(floor(player.x)),int((player.y*32+10)//32))//1)].doPass and Tile.tiles[int(map.gm(int(floor(player.x)),int((player.y*32+10)//32))//1)].doPass):
             player.y+=yspeed*speed
-        if(yspeed == -1 and Tile.tiles[int(surmap[int(floor(player.x))][int((player.y*32-10)//32)]//1)].doPass and Tile.tiles[int(map[int(floor(player.x))][int((player.y*32-10)//32)]//1)].doPass):
+        if(yspeed == -1 and Tile.tiles[int(map.gs(int(floor(player.x)),int((player.y*32-10)//32))//1)].doPass and Tile.tiles[int(map.gm(int(floor(player.x)),int((player.y*32-10)//32))//1)].doPass):
             player.y+=yspeed*speed
-    if(editorActivated and editor_click):
+    if(editorActivated and editor_click and placetick%30 == 0):
         x,y = pygame.mouse.get_pos()
         rx = (x-(options["fen"]["width"]/2)+player.x*32)//32
         ry = (y-(options["fen"]["height"]/2)+player.y*32)//32
         if(Tile.tiles[id[0]].type == "surmap"):
-            surmap[int(rx)][int(ry)] = id[0]
+            map.surmodify(int(rx),int(ry),id[0])
         else:
-            map[int(rx)][int(ry)] = id[0]
+            map.modify(int(rx),int(ry),id[0])
     col = int(options["fen"]["height"]//32+3)
     lin = int(options["fen"]["width"]//32+3)
     xmin = player.x*32-(options["fen"]["width"]/2)+32
@@ -176,21 +188,22 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
             else:
                 yz = floor(y/32)
                 xz = floor(x/32)
-                if(map[int(xz-1)][int(yz-1)]%1 == 0):
-                    texture = Tile.tiles[map[int(xz-1)][int(yz-1)]].texture
+                if(map.gm(int(xz-1),int(yz-1))%1 == 0):
+                    texture = Tile.tiles[map.gm(int(xz-1),int(yz-1))].texture
                     fen.blit(texture,((j)*32-xc,(i)*32-yc))
                 else:
-                    rot = int(map[int(xz-1)][int(yz-1)]%1*10)
+                    rot = int(map.gm(int(xz-1),int(yz-1))%1*10)
                     #print(rot)
-                    texture = Tile.tiles[int(map[int(xz-1)][int(yz-1)]//1)].textures[rot]
+                    texture = Tile.tiles[int(map.gm(int(xz-1),int(yz-1))//1)].textures[rot]
                     fen.blit(texture,((j)*32-xc,(i)*32-yc))
-                if(Tile.tiles[surmap[int(xz-1)][int(yz-1)]].name != "nada"):
-                    texture = Tile.tiles[surmap[int(xz-1)][int(yz-1)]].texture
+                if(Tile.tiles[map.gs(int(xz-1),int(yz-1))].name != "nada"):
+                    texture = Tile.tiles[map.gs(int(xz-1),int(yz-1))].texture
                     fen.blit(texture,((j)*32-xc,(i)*32-yc))
             x+=32
         x = xmin
         y+=32
     fen.blit(player.texture,(options["fen"]["width"]/2-16,options["fen"]["height"]/2-16))
+    map.draw_others(fen,player,options)
     img = font.render('VERSION ALPHA - MMORPG + EDITOR - Projet NSI', True, (255,255,255))
     fen.blit(img, (20, 32))
     img = font.render('PosX: {}'.format(player.x), True, (255,255,255))
