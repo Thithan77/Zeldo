@@ -24,11 +24,11 @@ fen = pygame.display.set_mode((options["fen"]["width"], options["fen"]["height"]
 pygame.event.set_allowed([QUIT, KEYDOWN, KEYUP,MOUSEBUTTONUP,MOUSEBUTTONDOWN])
 clock = pygame.time.Clock() # la clock qui permet de gérer les FPS (stonks)
 from init import *
-if(len(sys.argv) > 1 and sys.argv[1] == "multiplayer"):
+if("multiplayer" in sys.argv):
     print("Mode multijoueur enclenché")
-    map = cmap.multiMap(Tile)
+    map = cmap.multiMap(Tile,sys.argv)
 else:
-    map = cmap.Map(Tile)
+    map = cmap.Map(Tile,sys.argv)
 font = pygame.font.SysFont(None, 24) # On charge la police d'écriture
 playing = True
 editor_click = False
