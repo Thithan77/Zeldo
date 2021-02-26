@@ -27,7 +27,7 @@ def threaded_map():
         except error as e:
             print(e)
 class Map:
-    def __init__(self,Tile):
+    def __init__(self,Tile,argv):
         self.map = []
         self.surmap = []
         conversion,self.map,self.surmap = json.loads(open("map.json",'r').read()) # on charge la map depuis le fichier
@@ -47,18 +47,19 @@ class Map:
             for i,j in enumerate(self.surmap):
                 for k,l in enumerate(self.surmap[i]):
                     self.surmap[i][k] = toConvert[self.surmap[i][k]]
-        for i in range(200):
-            for j in range(200):
-                self.surmap[i][j] = Tile.nameToNumber["nada"]
-                k = noise([i,j])
-                if(k < -0.25):
-                    self.map[i][j] = Tile.nameToNumber["eau"]
-                elif(k < -0.1):
-                    self.map[i][j] = Tile.nameToNumber["sable"]
-                else:
-                    self.map[i][j] = Tile.nameToNumber["gazon"]
-                if(k > 0.25):
-                    self.surmap[i][j] = Tile.nameToNumber["arbre"]
+        if("perlin" in argv):
+            for i in range(200):
+                for j in range(200):
+                    self.surmap[i][j] = Tile.nameToNumber["nada"]
+                    k = noise([i,j])
+                    if(k < -0.25):
+                        self.map[i][j] = Tile.nameToNumber["eau"]
+                    elif(k < -0.1):
+                        self.map[i][j] = Tile.nameToNumber["sable"]
+                    else:
+                        self.map[i][j] = Tile.nameToNumber["gazon"]
+                    if(k > 0.25):
+                        self.surmap[i][j] = Tile.nameToNumber["arbre"]
     def gm(self,i,j):
         xchunk = i//32
         ychunk = j//32
@@ -78,7 +79,7 @@ class multiMap:
     map = []
     surmap = []
     poses = []
-    def __init__(self,Tile):
+    def __init__(self,Tile,argv):
         multiMap.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         multiMap.socket.connect(("127.0.0.1",8081))
         data = multiMap.socket.recv(2048*128).decode("utf-8")
