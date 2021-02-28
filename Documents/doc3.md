@@ -9,6 +9,7 @@ version) : version “minimale”, version(s) “intermédiaire(s)”, et versio
 - pyyaml
 - json
 
+Le jeu est basé sur un système de tile pour la plupart de ses systèmes pour créer un fonctionnement en "LEGO" comme pour la map et le système d'inventaire qui est encore en dévellopement
 Tout le jeu est réalisé avec la librairie pygame avec une utilisation de tkinter pour l'éditeur car plus simple pour créer de nombreux boutons
 pyyaml et json pour charger les fichiers .yml et .json qui servent à la configuration du jeu
 Les fichiers se présentent de la façon suivante (ici le fichier de configuration pour le bananier présent dans content\tiles\):
