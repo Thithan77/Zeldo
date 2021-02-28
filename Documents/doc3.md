@@ -8,6 +8,7 @@ version) : version “minimale”, version(s) “intermédiaire(s)”, et versio
 - tkinter
 - pyyaml
 - json
+
 Tout le jeu est réalisé avec la librairie pygame avec une utilisation de tkinter pour l'éditeur car plus simple pour créer de nombreux boutons
 pyyaml et json pour charger les fichiers .yml et .json qui servent à la configuration du jeu
 Les fichiers se présentent de la façon suivante (ici le fichier de configuration pour le bananier présent dans content\tiles\):
@@ -50,6 +51,6 @@ for i in range(200):
         print(noise([i,j]))
 ```
 ## Les différentes versions visées
-- Minimale : Le moteur du jeu tourne fluidement mais il est impossible d'interragir avec la carte (cette version est atteinte à ce stade du projet)
-- Intermédiaire : Les fonctions de base du jeu sont maintenant implémentées. Le joueur peut récuperer les ressources sur la carte , il peut utiliser des machines comme des fours , des coffres.
-- Idéale : Un mode multijoueur est utilisable
+- [x] Minimale : Le moteur du jeu tourne fluidement mais il est impossible d'interragir avec la carte (cette version est atteinte à ce stade du projet)
+- [ ] Intermédiaire : Les fonctions de base du jeu sont maintenant implémentées. Le joueur peut récuperer les ressources sur la carte , il peut utiliser des machines comme des fours , des coffres.
+- [ ] Idéale : Un mode multijoueur est utilisable
