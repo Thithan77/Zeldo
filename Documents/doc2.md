@@ -19,7 +19,7 @@ Utilisation d'une repository Github privée
   - inventories.py : Gestion des inventaires / Classe Inventory
 - content
   - inventories
-    - layout : Les layouts pour els inventaires (en dévellopement / sujet à changement prochainement)
+    - layout : Les layouts pour les inventaires (en dévellopement / sujet à changement prochainement)
     - python : gestion des inventaires mais en python (en dévellopement / sujet à changement prochainement)
   - tiles : Fichiers .yml qui sont utilisés pour tous les tiles du jeu
   - items : Idem pour les items
