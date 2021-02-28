@@ -50,6 +50,15 @@ for i in range(200):
     for j in range(200):
         print(noise([i,j]))
 ```
+Le code du jeu est fait pour s'adapter à de nombreuses résolutions et cette dernière est modifiable dans le fichier config.json
+```json
+{
+  "fen":{
+    "height":720,
+    "width":1080
+  }
+}
+```
 ## Les différentes versions visées
 - [x] Minimale : Le moteur du jeu tourne fluidement mais il est impossible d'interragir avec la carte (cette version est atteinte à ce stade du projet)
 - [ ] Intermédiaire : Les fonctions de base du jeu sont maintenant implémentées. Le joueur peut récuperer les ressources sur la carte , il peut utiliser des machines comme des fours , des coffres.
