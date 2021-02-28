@@ -29,6 +29,6 @@ Utilisation d'une repository Github privée
 - config.json : La configuration du jeu (actuellement uniquement la résolution mais sujet à différents ajouts)
 - init.py : Chargement du jeu en particulier de tous les fichiers .yml (voir doc3 pour plus d'information sur le fonctionnement)
 - main.py : Le fichier principal du jeu
-- map.json : Stockage de la carte / Format temporaire car plus simple à modifier manuellement un mode comme Pickle sera peut être utilisé plus tard
+- map.json : Stockage de la carte / Format temporaire car plus simple à modifier manuellement un module comme Pickle sera peut être utilisé plus tard
 - Objectifs.md : Les objectifs (inutile)
 - perlinNoise.py : test de la génération en utilisant le bruit de Perlin
