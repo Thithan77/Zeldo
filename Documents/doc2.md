@@ -19,7 +19,7 @@ Utilisation d'une repository Github privée
   - inventories.py : Gestion des inventaires / Classe Inventory
 - content
   - inventories
-    - layout : Les layouts pour els inventaires (en dévellopement / sujet à changement prochainement)
+    - layout : Les layouts pour les inventaires (en dévellopement / sujet à changement prochainement)
     - python : gestion des inventaires mais en python (en dévellopement / sujet à changement prochainement)
   - tiles : Fichiers .yml qui sont utilisés pour tous les tiles du jeu
   - items : Idem pour les items
@@ -29,6 +29,6 @@ Utilisation d'une repository Github privée
 - config.json : La configuration du jeu (actuellement uniquement la résolution mais sujet à différents ajouts)
 - init.py : Chargement du jeu en particulier de tous les fichiers .yml (voir doc3 pour plus d'information sur le fonctionnement)
 - main.py : Le fichier principal du jeu
-- map.json : Stockage de la carte / Format temporaire car plus simple à modifier manuellement un mode comme Pickle sera peut être utilisé plus tard
+- map.json : Stockage de la carte / Format temporaire car plus simple à modifier manuellement un module comme Pickle sera peut être utilisé plus tard
 - Objectifs.md : Les objectifs (inutile)
 - perlinNoise.py : test de la génération en utilisant le bruit de Perlin
