@@ -14,6 +14,7 @@ import classes.player as pl# On importe la classe qui gère le joueur
 import classes.map as cmap
 from functools import partial
 import time
+import classes.inventories as inventories
 id = [0]
 try:
     options = json.loads(open("config.json",'r').read()) # On importe le fichier json sous forme d'un objet
@@ -35,6 +36,7 @@ editor_click = False
 editorActivated = False
 noclip = False
 placetick = 0
+InventoryTile = it()
 """
 map = []
 for i in range(200):
@@ -75,6 +77,7 @@ xspeed,yspeed = 0,0
 lastTime = time.time()
 tot = 0
 n = 0
+inventory = inventories.Inventory(InventoryTile)
 while playing: # tant que le joueur joue on continue la boucle du jeu
     lastTime = time.time()
     placetick +=1
@@ -101,6 +104,8 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                 xspeed = 1
             if event.key == K_k:
                 noclip = not noclip
+            if event.key == K_e:
+                open_inventory(fen, inventory, options,player,Tile,map)
             if event.key == K_g:
                 jzon = open("map.json",'w')
                 conversion = []
