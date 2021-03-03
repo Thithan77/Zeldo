@@ -44,6 +44,7 @@ lastTime = time.time() # Pour calculer les performances et tout
 tot = 0 # Le temps de jeu
 n = 0 # Le nombre de frames
 inventory = inventories.Inventory(InventoryTile)
+selected_inv = 8 # La case sélectionnée dans l'inventaire
 while playing: # tant que le joueur joue on continue la boucle du jeu
     lastTime = time.time()
     placetick +=1
@@ -56,6 +57,12 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
         if event.type == pygame.MOUSEBUTTONDOWN:
             if(event.button == 2):
                 editor_click = True # On active le placement auto des tiles
+            inv = pygame.Rect(options["fen"]["width"]-32*9,options["fen"]["height"]-32,9*32,32)
+            if(inv.collidepoint(pygame.mouse.get_pos())):
+                x,y = pygame.mouse.get_pos()
+                ux = x-(options["fen"]["width"]-32*9)
+                ux//=32
+                selected_inv = ux
         if event.type == pygame.QUIT: # croix rouge
             playing = False # On met à False donc la boucle s'arrête et le jeu se ferme
             print(tot/n*1000) # On affiche le temps moyen pour une frame
@@ -175,6 +182,13 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
         y+=32
     fen.blit(player.texture,(options["fen"]["width"]/2-16,options["fen"]["height"]/2-16))
     map.draw_others(fen,player,options)
+    for i in range(9):
+        texture = copy.copy(inventory.tab[8][i].get_texture())
+        if(i == selected_inv):
+            s = pygame.Surface((32,32)).convert_alpha()
+            s.fill((255,0,0,100))
+            texture.blit(s,(0,0))
+        fen.blit(texture,(options["fen"]["width"]-32*9+32*i,options["fen"]["height"]-32))
     classes.mobs.draw_mobs(fen,player,cmap,Tile)
     img = font.render('VERSION ALPHA - MMORPG + EDITOR - Projet NSI', True, (255,255,255))
     fen.blit(img, (20, 32))
