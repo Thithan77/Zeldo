@@ -5,16 +5,17 @@ from pygame.locals import * # import des constantes de Pygame comme QUIT
 from classes.bordel import * # On importe la libairie perso bordel (ya des trucs bordels dedans)
 import os # Plein de fonctions sytèmes utiles (geta)
 import sys
-import socket
+import socket # Socket pour le jeu en ligne
 pygame.init() # Initialisation de pygame
 #pygame.key.set_repeat(10, 16) # set_repeat(délais avant de repêter une touche,délais entre chaque répétition)
 import json # On importe la librairie json pour pouvoir utiliser des fichiers au format JSON
 from math import *
 import classes.player as pl# On importe la classe qui gère le joueur
-import classes.map as cmap
-from functools import partial
+import classes.map as cmap # La classe qui gère la map
+from functools import partial # Une fonction utile mais flemme d'expliquer pourquoi
 import time
-import classes.inventories as inventories
+import classes.inventories as inventories # La classe qui gère les inventaires
+import classes.mobs # Les mobs (c'est géré par Léo je lui fait confiance owo)
 id = [0]
 try:
     options = json.loads(open("config.json",'r').read()) # On importe le fichier json sous forme d'un objet
@@ -22,102 +23,67 @@ except:
     print("Erreur dans le chargement du fichier de configuration (existe-t-il ?)")
     sys.exit()
 fen = pygame.display.set_mode((options["fen"]["width"], options["fen"]["height"]),DOUBLEBUF) # On définit la fenêtre à la taille indiquée dans le fichier config
-pygame.event.set_allowed([QUIT, KEYDOWN, KEYUP,MOUSEBUTTONUP,MOUSEBUTTONDOWN])
+pygame.event.set_allowed([QUIT, KEYDOWN, KEYUP,MOUSEBUTTONUP,MOUSEBUTTONDOWN]) # On n'active pas tous les évènements pour gagner un peu en performance
 clock = pygame.time.Clock() # la clock qui permet de gérer les FPS (stonks)
-from init import *
-if("multiplayer" in sys.argv):
+from init import * # On importe le fichier init ce qui a pour effet de lancer l'initialisation du jeu
+if("multiplayer" in sys.argv): # Si multiplayer est dans les argv (Example : le programme est lancé avec "python main.py multiplayer")
     print("Mode multijoueur enclenché")
-    map = cmap.multiMap(Tile,sys.argv)
+    map = cmap.multiMap(Tile,sys.argv) # gestion différente de la map qui est importée et actualisée depuis le serveur
 else:
     map = cmap.Map(Tile,sys.argv)
 font = pygame.font.SysFont(None, 24) # On charge la police d'écriture
-playing = True
-editor_click = False
-editorActivated = False
-noclip = False
+playing = True # variable pour la boucle principale du jeu
+editor_click = False # grosso modo si le clic est enfoncé ça permet de poser plusieurs cases à la suite
+editorActivated = False # Si l'éditeur est activé (C'est pour toi ça Léo)
+noclip = False # Le noclip (mode fantôme : tu traverses les murs)
 placetick = 0
-InventoryTile = it()
-"""
-map = []
-for i in range(200):
-    map.append([])
-    for j in range(200):
-        map[i].append(0)
-surmap = []
-for i in range(200):
-    surmap.append([])
-    for j in range(200):
-        surmap[i].append(5)
-jzon = open("map.json",'w')
-maps = [map,surmap]
-jzon.write(json.dumps(maps))
-print("Saved !")
-"""
-"""
-conversion,map,surmap = json.loads(open("map.json",'r').read()) # on charge la map depuis le fichier
-toConvert = {}
-needConvert = False
-for i in conversion:
-    if(Tile.tiles[Tile.nameToNumber[i["name"]]].id != i["id"]):
-        print("Convertion nécessaire de la map")
-        toConvert[i["id"]] = Tile.tiles[Tile.nameToNumber[i["name"]]].id
-        needConvert = True
-    else:
-        toConvert[i["id"]] = Tile.tiles[Tile.nameToNumber[i["name"]]].id
-if(needConvert):
-    for i,j in enumerate(map):
-        for k,l in enumerate(map[i]):
-            map[i][k] = toConvert[map[i][k]//1]+map[i][k]%1
-    for i,j in enumerate(surmap):
-        for k,l in enumerate(surmap[i]):
-            surmap[i][k] = toConvert[surmap[i][k]]
-"""
+InventoryTile = it() # Récupération de InventoryTile
 player = pl.Player() # On initalise le joueur
-xspeed,yspeed = 0,0
-lastTime = time.time()
-tot = 0
-n = 0
+xspeed,yspeed = 0,0 # la vitesse du joueur selon les axes x et y
+lastTime = time.time() # Pour calculer les performances et tout
+tot = 0 # Le temps de jeu
+n = 0 # Le nombre de frames
 inventory = inventories.Inventory(InventoryTile)
 while playing: # tant que le joueur joue on continue la boucle du jeu
     lastTime = time.time()
     placetick +=1
-    fen.fill((255,255,255))
-    speed = Tile.tiles[int(map.gm(int(player.x),int(player.y))//1)].speed
+    fen.fill((255,255,255)) # On met un fill blanc tout derrière
+    speed = Tile.tiles[int(map.gm(int(player.x),int(player.y))//1)].speed # On récupère la vitesse de la case qui va servir de multiplicateur
     for event in pygame.event.get(): # les évènements
         if event.type == pygame.MOUSEBUTTONUP:
-            if(event.button == 2):
-                editor_click = False
+            if(event.button == 2): # Si c'est un clic molette
+                editor_click = False # On désactive la placement auto des tiles
         if event.type == pygame.MOUSEBUTTONDOWN:
             if(event.button == 2):
-                editor_click = True
+                editor_click = True # On active le placement auto des tiles
         if event.type == pygame.QUIT: # croix rouge
-            playing = False
-            print(tot/n*1000)
+            playing = False # On met à False donc la boucle s'arrête et le jeu se ferme
+            print(tot/n*1000) # On affiche le temps moyen pour une frame
         if event.type == pygame.KEYDOWN: # Touche pressée
             if event.key == K_z:
-                yspeed = -1
+                yspeed = -1 # Vers la gauche
             if event.key == K_s:
-                yspeed = 1
+                yspeed = 1 # vers la droite
             if event.key == K_q:
-                xspeed = -1
+                xspeed = -1 # Vers le haut
             if event.key == K_d:
-                xspeed = 1
+                xspeed = 1 # vers le bas
             if event.key == K_k:
-                noclip = not noclip
+                noclip = not noclip # On change l'état du noclip vers l'inverse
             if event.key == K_e:
-                open_inventory(fen, inventory, options,player,Tile,map)
-            if event.key == K_g:
-                jzon = open("map.json",'w')
-                conversion = []
+                open_inventory(fen, inventory, options,player,Tile,map) # On ouvre l'inventaire principal en mettant en pause cette fonction
+            if event.key == K_g: # Sauvegarde de la carte
+                jzon = open("map.json",'w') # On charge le fichier map
+                conversion = [] # Pas utile d'expliquer mais on convertit si les tiles ont changées
                 for i in Tile.tiles:
-                    g = {}
+                    g = {} # variable temporaire
                     g["name"] = i.name
                     g["id"] = i.id
                     conversion.append(g)
                 maps = [conversion,map.map,map.surmap]
                 jzon.write(json.dumps(maps))
                 print("Saved !")
-            if event.key == K_o:
+            if event.key == K_o: # Pour tourner une tile compatible (Attention provoque un crash si pas déclarée comme tournable)
                 if(editorActivated):
                     x,y = pygame.mouse.get_pos()
                     rx = (x-(options["fen"]["width"]/2)+player.x*32)//32
@@ -128,7 +94,7 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                         map.modify(int(rx),int(ry),map.gm(int(rx),int(ry)) - 0.3)
                     else:
                         map.modify(int(rx),int(ry),map.gm(int(rx),int(ry)) + 0.1)
-            if event.key == K_y:
+            if event.key == K_y: # Ouvre le menu tkinter pour l'éditeur
                 editorActivated = True
                 tk = tkinter.Tk()
                 page = 0
@@ -209,6 +175,7 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
         y+=32
     fen.blit(player.texture,(options["fen"]["width"]/2-16,options["fen"]["height"]/2-16))
     map.draw_others(fen,player,options)
+    classes.mobs.draw_mobs(fen,player,cmap,Tile)
     img = font.render('VERSION ALPHA - MMORPG + EDITOR - Projet NSI', True, (255,255,255))
     fen.blit(img, (20, 32))
     img = font.render('PosX: {}'.format(player.x), True, (255,255,255))

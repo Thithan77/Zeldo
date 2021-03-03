@@ -1,5 +1,11 @@
 import pygame
 class Item:
+    """
+    La classe item
+    Pour ajouter une nouvel item:
+    Item(name,nomOption=valeurOption,dicoAvecOption)
+    Néanmoins préférer déclarer un fichier dans content\items
+    """
     n = 0 #Indique le nombre d'instances aka le nombre de tiles qu'on a (permet de définir des ids dynamiques sans problème)
     nameToNumber = {} # Un dictionnaire qui associe le nom à l'id
     items = [] # la liste de toutes les instances
