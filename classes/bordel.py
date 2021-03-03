@@ -32,5 +32,5 @@ def past(tk,page,tiles,id):
         tk.mainloop()
 def globalToLocalCoord(x,y,playerx,playery):
     rx = (x-(options["fen"]["width"]/2)+playerx*32)
-    rx = (y-(options["fen"]["height"]/2)+player y*32)
+    rx = (y-(options["fen"]["height"]/2)+playery*32)
     return rx,ry
