@@ -2,7 +2,7 @@
 
 ## Description de l’équipe et rôle de chacun
 Les rôles ne sont pas vraiment définis , chacun peut s’intéresser à plusieurs parties du projet
-- Léo : Chômage
+- Léo : Mapping
 - Loïc : Graphisme
 - Thibaut : Programmation / son
 
