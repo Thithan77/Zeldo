@@ -5,7 +5,7 @@ from classes.InventoryTile import *
 class storage(InventoryTile):
     def __init__(self,Item):
         self.Item = Item
-        super().__init__("storage",fileName="sable.png")
+        super().__init__("storage",fileName="Inventaire_Objet.png")
         self.item = "wood"
     def click(self,inventory):
         print("Click storage")
