@@ -26,11 +26,6 @@ fen = pygame.display.set_mode((options["fen"]["width"], options["fen"]["height"]
 pygame.event.set_allowed([QUIT, KEYDOWN, KEYUP,MOUSEBUTTONUP,MOUSEBUTTONDOWN]) # On n'active pas tous les évènements pour gagner un peu en performance
 clock = pygame.time.Clock() # la clock qui permet de gérer les FPS (stonks)
 from init import * # On importe le fichier init ce qui a pour effet de lancer l'initialisation du jeu
-if("multiplayer" in sys.argv): # Si multiplayer est dans les argv (Example : le programme est lancé avec "python main.py multiplayer")
-    print("Mode multijoueur enclenché")
-    map = cmap.multiMap(Tile,sys.argv) # gestion différente de la map qui est importée et actualisée depuis le serveur
-else:
-    map = cmap.Map(Tile,sys.argv)
 font = pygame.font.SysFont(None, 24) # On charge la police d'écriture
 playing = True # variable pour la boucle principale du jeu
 editor_click = False # grosso modo si le clic est enfoncé ça permet de poser plusieurs cases à la suite
@@ -45,6 +40,11 @@ tot = 0 # Le temps de jeu
 n = 0 # Le nombre de frames
 inventory = inventories.Inventory(InventoryTile)
 selected_inv = 8 # La case sélectionnée dans l'inventaire
+if("multiplayer" in sys.argv): # Si multiplayer est dans les argv (Example : le programme est lancé avec "python main.py multiplayer")
+    print("Mode multijoueur enclenché")
+    map = cmap.multiMap(Tile,sys.argv,player) # gestion différente de la map qui est importée et actualisée depuis le serveur
+else:
+    map = cmap.Map(Tile,sys.argv)
 while playing: # tant que le joueur joue on continue la boucle du jeu
     lastTime = time.time()
     placetick +=1
