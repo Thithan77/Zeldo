@@ -167,12 +167,23 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                 yz = floor(y/32)
                 xz = floor(x/32)
                 if(map.gm(int(xz-1),int(yz-1))%1 == 0):
-                    texture = Tile.tiles[map.gm(int(xz-1),int(yz-1))].texture
+                    case = Tile.tiles[map.gm(int(xz-1),int(yz-1))]
+                    if(case.multiTile):
+                        xy = int(yz+xz)
+                        texture = case.textures[xy%len(case.textures)]
+                        texture = texture[0]
+                    else:
+                        texture = case.texture
                     fen.blit(texture,((j)*32-xc,(i)*32-yc))
                 else:
                     rot = int(map.gm(int(xz-1),int(yz-1))%1*10)
                     #print(rot)
-                    texture = Tile.tiles[int(map.gm(int(xz-1),int(yz-1))//1)].textures[rot]
+                    case = Tile.tiles[int(map.gm(int(xz-1),int(yz-1))//1)]
+                    if(case.multiTile):
+                        xy = int(yz+xz)
+                        texture = case.textures[xy%len(case.textures)][rot]
+                    else:
+                        texture = case.textures[rot]
                     fen.blit(texture,((j)*32-xc,(i)*32-yc))
                 if(Tile.tiles[map.gs(int(xz-1),int(yz-1))].name != "nada"):
                     texture = Tile.tiles[map.gs(int(xz-1),int(yz-1))].texture

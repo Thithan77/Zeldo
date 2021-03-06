@@ -1,6 +1,0 @@
-name : "sableau1"
-fileName: "sableau1.png"
-doPass : true
-speed : 0.05
-type: "map"
-rotation: true

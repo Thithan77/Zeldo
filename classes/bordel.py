@@ -31,6 +31,9 @@ def past(tk,page,tiles,id):
         tkinter.Button(tk,text="Page précédente",command=partial(past,tk,page,tiles,id)).pack()
         tk.mainloop()
 def globalToLocalCoord(x,y,playerx,playery):
+    """
     rx = (x-(options["fen"]["width"]/2)+playerx*32)
     rx = (y-(options["fen"]["height"]/2)+playery*32)
     return rx,ry
+    """
+    pass
