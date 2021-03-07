@@ -3,7 +3,7 @@ import _thread
 import sys
 import json
 import copy
-server = "127.0.0.1"
+server = "192.168.1.48"
 port = 8081
 
 s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
@@ -24,9 +24,9 @@ def threaded_client(conn):
     while True:
         data = conn.recv(2048).decode()
         jzon = json.loads(data)
-        print(f"Data : {data}")
+        #print(f"Data : {data}")
         for u in jzon:
-            print(f"u: {u}")
+            #print(f"u: {u}")
             for i,j in enumerate(updates):
                 if(j != conn.getpeername()):
                     if(u[0] != "pos"):
@@ -37,7 +37,6 @@ def threaded_client(conn):
                 surmap[u[1]][u[2]] = i[3]
             elif(u[0] == "pos"):
                 positions[conn.getpeername()] = (u[1],u[2])
-        print(updates)
         reply = updates[conn.getpeername()]
         for i,j in enumerate(positions):
             if(j!=conn.getpeername()):
@@ -49,8 +48,10 @@ def threaded_client(conn):
             del updates[conn.getpeername()]
             del positions[conn.getpeername()]
         else:
+            """
             print(f"Received {data}")
             print(f"Sending {reply}")
+            """
         conn.send(str.encode(json.dumps(reply)))
 while True:
     conn,addr = s.accept()
