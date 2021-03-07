@@ -34,7 +34,7 @@ def threaded_client(conn):
             if(u[0] == "modmap"):
                 map[u[1]][u[2]] = u[3]
             elif(u[0] == "modsurmap"):
-                surmap[u[1]][u[2]] = i[3]
+                surmap[u[1]][u[2]] = u[3]
             elif(u[0] == "pos"):
                 positions[conn.getpeername()] = (u[1],u[2])
         reply = updates[conn.getpeername()]
