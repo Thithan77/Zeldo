@@ -143,7 +143,7 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
             player.y+=yspeed*speed
         if(yspeed == -1 and Tile.tiles[int(map.gs(int(floor(player.x)),int((player.y*32-10)//32))//1)].doPass and Tile.tiles[int(map.gm(int(floor(player.x)),int((player.y*32-10)//32))//1)].doPass):
             player.y+=yspeed*speed
-    if(editorActivated and editor_click and placetick%30 == 0):
+    if(editorActivated and editor_click):
         x,y = pygame.mouse.get_pos()
         rx = (x-(options["fen"]["width"]/2)+player.x*32)//32
         ry = (y-(options["fen"]["height"]/2)+player.y*32)//32
