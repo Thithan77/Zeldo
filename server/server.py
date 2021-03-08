@@ -20,7 +20,7 @@ print("Server started ! Waiting for connexion ...")
 def threaded_client(conn):
     print("New client !")
     updates[conn.getpeername()] = []
-    positions[conn.getpeername()] = (0,0)
+    positions[conn.getpeername()] = (0,0,"uwu")
     while True:
         data = conn.recv(2048).decode()
         jzon = json.loads(data)
@@ -36,12 +36,12 @@ def threaded_client(conn):
             elif(u[0] == "modsurmap"):
                 surmap[u[1]][u[2]] = u[3]
             elif(u[0] == "pos"):
-                positions[conn.getpeername()] = (u[1],u[2])
+                positions[conn.getpeername()] = (u[1],u[2],u[3])
         reply = updates[conn.getpeername()]
         for i,j in enumerate(positions):
             if(j!=conn.getpeername()):
                 u = positions[j]
-                reply.append(("pos",u[0],u[1]))
+                reply.append(("pos",u[0],u[1],u[2]))
         updates[conn.getpeername()] = []
         if not data:
             print(f"client {conn.getpeername()} disconnected")

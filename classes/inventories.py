@@ -9,11 +9,7 @@ class Inventory:
         for i in range(9):
             self.tab.append([])
             for j in range(9):
-                self.tab[i].append(copy.copy(InventoryTile.tiles[InventoryTile.nameToNumber["void"]]))
-        self.tab[8][8] = copy.copy(InventoryTile.tiles[InventoryTile.nameToNumber["storage"]])
-        self.tab[7][8] = copy.copy(InventoryTile.tiles[InventoryTile.nameToNumber["storage"]])
-        self.tab[7][7] = copy.copy(InventoryTile.tiles[InventoryTile.nameToNumber["storage"]])
-        self.tab[8][7] = copy.copy(InventoryTile.tiles[InventoryTile.nameToNumber["storage"]])
+                self.tab[i].append(copy.copy(InventoryTile.tiles[InventoryTile.nameToNumber["storage"]]))
 def open_inventory(fen,inventory,options,player,Tile,map):
     inv_open = True
     while inv_open:

@@ -3,15 +3,16 @@ import socket
 from _thread import *
 import time
 import copy
+import pygame
 from perlin_noise import PerlinNoise
 noise = PerlinNoise(octaves=0.1, seed=648325)
 others = []
-def threaded_map(player):
+def threaded_map(player,pseudo):
     global others
     while True:
         try:
             updates = multiMap.updates
-            updates.append(("pos",player.x,player.y))
+            updates.append(("pos",player.x,player.y,pseudo))
             multiMap.updates = []
             jzon = json.dumps(updates)
             multiMap.socket.send(jzon.encode())
@@ -24,7 +25,7 @@ def threaded_map(player):
                 elif(i[0] == "modsurmap"):
                     multiMap.surmap[i[1]][i[2]] = i[3]
                 elif(i[0] == "pos"):
-                    newothers.append((i[1],i[2]))
+                    newothers.append((i[1],i[2],i[3]))
             others = copy.copy(newothers)
         except error as e:
             print(e)
@@ -80,14 +81,16 @@ class multiMap:
     map,surmap,conv = [],[],[]
     socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     updates = []
-    def __init__(self,a,b,player):
+    def __init__(self,a,b,player,pseudo):
         self.server = "89.89.197.173"
         self.port = 8081
         self.addr = (self.server,self.port)
+        self.pseudo = pseudo
         multiMap.socket.connect(self.addr)
+        self.font = pygame.font.SysFont(None, 14)
         recv = multiMap.socket.recv(2048*250).decode("utf-8")
         multiMap.conv,multiMap.map,multiMap.surmap = json.loads(recv)
-        start_new_thread(threaded_map,(player,))
+        start_new_thread(threaded_map,(player,pseudo))
     def gm(self,i,j):
         xchunk = i//32
         ychunk = j//32
@@ -110,3 +113,5 @@ class multiMap:
             rx = x - player.x*32 + options["fen"]["width"]/2-16
             ry = y - player.y*32 + options["fen"]["height"]/2-16
             fen.blit(player.texture,(rx,ry))
+            img = self.font.render(i[2], True, (255,255,255))
+            fen.blit(img, (rx, ry-8))

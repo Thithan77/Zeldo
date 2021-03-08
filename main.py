@@ -22,6 +22,16 @@ try:
 except:
     print("Erreur dans le chargement du fichier de configuration (existe-t-il ?)")
     sys.exit()
+tk = tkinter.Tk()
+tkinter.Label(tk,text="MMORPG Launcher").pack()
+pseudo = tkinter.StringVar()
+tkinter.Entry(tk,textvariable=pseudo).pack()
+multi = tkinter.IntVar()
+tkinter.Checkbutton(tk, text='Multiplayer',variable=multi).pack()
+tk.mainloop()
+print(multi.get())
+pseudo = pseudo.get()
+print(pseudo)
 fen = pygame.display.set_mode((options["fen"]["width"], options["fen"]["height"]),DOUBLEBUF) # On définit la fenêtre à la taille indiquée dans le fichier config
 pygame.event.set_allowed([QUIT, KEYDOWN, KEYUP,MOUSEBUTTONUP,MOUSEBUTTONDOWN]) # On n'active pas tous les évènements pour gagner un peu en performance
 clock = pygame.time.Clock() # la clock qui permet de gérer les FPS (stonks)
@@ -39,10 +49,22 @@ lastTime = time.time() # Pour calculer les performances et tout
 tot = 0 # Le temps de jeu
 n = 0 # Le nombre de frames
 inventory = inventories.Inventory(InventoryTile)
+inventory.tab[5][5].item = "wood"
+inventory.tab[5][5].count = 1
+inventory.tab[5][7].item = "wood"
+inventory.tab[5][7].count = 3
 selected_inv = 8 # La case sélectionnée dans l'inventaire
-if("multiplayer" in sys.argv): # Si multiplayer est dans les argv (Example : le programme est lancé avec "python main.py multiplayer")
+invOpen = False
+drag = False
+drag_x = 0
+drag_y = 0
+dragged_Item = None
+dragged_Item_count = 0
+drag_coming_x = 0
+drag_coming_y = 0
+if(multi.get() == 1): # Si multiplayer est dans les argv (Example : le programme est lancé avec "python main.py multiplayer")
     print("Mode multijoueur enclenché")
-    map = cmap.multiMap(Tile,sys.argv,player) # gestion différente de la map qui est importée et actualisée depuis le serveur
+    map = cmap.multiMap(Tile,sys.argv,player,pseudo) # gestion différente de la map qui est importée et actualisée depuis le serveur
 else:
     map = cmap.Map(Tile,sys.argv)
 while playing: # tant que le joueur joue on continue la boucle du jeu
@@ -54,9 +76,74 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
         if event.type == pygame.MOUSEBUTTONUP:
             if(event.button == 2): # Si c'est un clic molette
                 editor_click = False # On désactive la placement auto des tiles
+            if(event.button == 1):
+                if(drag):
+                    drag = False
+                    x0 = options["fen"]["width"] - 9*32
+                    y0 = options["fen"]["height"] - 9*32
+                    x,y = pygame.mouse.get_pos()
+                    x-=x0
+                    y-=y0
+                    if(x>0 and y>0):
+                        rx = x//32
+                        ry = y//32
+                        if(inventory.tab[rx][ry].name == "storage"):
+                            if(inventory.tab[rx][ry].item == None):
+                                inventory.tab[rx][ry].item = dragged_Item
+                                inventory.tab[rx][ry].count = dragged_Item_count
+                                dragged_Item = None
+                            elif(inventory.tab[rx][ry].item == dragged_Item):
+                                inventory.tab[rx][ry].count+=dragged_Item_count
+                            else:
+                                inventory.tab[drag_coming_x][drag_coming_y].item = dragged_Item
+                                inventory.tab[drag_coming_x][drag_coming_y].count = dragged_Item_count
+                        else:
+                            inventory.tab[drag_coming_x][drag_coming_y].count = dragged_Item_count
+                    else:
+                        inventory.tab[drag_coming_x][drag_coming_y].count = dragged_Item_count
         if event.type == pygame.MOUSEBUTTONDOWN:
             if(event.button == 2):
                 editor_click = True # On active le placement auto des tiles
+            if(event.button == 1 and invOpen):
+                x0 = options["fen"]["width"] - 9*32
+                y0 = options["fen"]["height"] - 9*32
+                x,y = pygame.mouse.get_pos()
+                x-=x0
+                y-=y0
+                if(x>0 and y>0):
+                    rx = x//32
+                    ry = y//32
+                    drag_x = x-rx*32
+                    drag_y = y-ry*32
+                    if(inventory.tab[rx][ry].name == "storage"):
+                        if(inventory.tab[rx][ry].item != None):
+                            drag = True
+                            dragged_Item = inventory.tab[rx][ry].item
+                            dragged_Item_count = inventory.tab[rx][ry].count
+                            inventory.tab[rx][ry].item = None
+                            inventory.tab[rx][ry].count = 0
+                            drag_coming_x = rx
+                            drag_coming_y = ry
+            if(event.button == 3 and invOpen):
+                x0 = options["fen"]["width"] - 9*32
+                y0 = options["fen"]["height"] - 9*32
+                x,y = pygame.mouse.get_pos()
+                x-=x0
+                y-=y0
+                if(x>0 and y>0):
+                    rx = x//32
+                    ry = y//32
+                    drag_x = x-rx*32
+                    drag_y = y-ry*32
+                    if(inventory.tab[rx][ry].name == "storage"):
+                        if(inventory.tab[rx][ry].item != None and inventory.tab[rx][ry].count>1):
+                            drag = True
+                            dragged_Item = inventory.tab[rx][ry].item
+                            toTake = inventory.tab[rx][ry].count//2
+                            inventory.tab[rx][ry].count-=toTake
+                            dragged_Item_count = toTake
+                            drag_coming_x = rx
+                            drag_coming_y = ry
             inv = pygame.Rect(options["fen"]["width"]-32*9,options["fen"]["height"]-32,9*32,32)
             if(inv.collidepoint(pygame.mouse.get_pos())):
                 x,y = pygame.mouse.get_pos()
@@ -78,7 +165,7 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
             if event.key == K_k:
                 noclip = not noclip # On change l'état du noclip vers l'inverse
             if event.key == K_e:
-                open_inventory(fen, inventory, options,player,Tile,map) # On ouvre l'inventaire principal en mettant en pause cette fonction
+                invOpen = not invOpen # On ouvre l'inventaire principal en mettant en pause cette fonction
             if event.key == K_g: # Sauvegarde de la carte
                 jzon = open("map.json",'w') # On charge le fichier map
                 conversion = [] # Pas utile d'expliquer mais on convertit si les tiles ont changées
@@ -194,12 +281,26 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
     fen.blit(player.texture,(options["fen"]["width"]/2-16,options["fen"]["height"]/2-16))
     map.draw_others(fen,player,options)
     for i in range(9):
-        texture = copy.copy(inventory.tab[8][i].get_texture())
+        texture = inventory.tab[i][8].get_texture()
         if(i == selected_inv):
             s = pygame.Surface((32,32)).convert_alpha()
             s.fill((255,0,0,100))
             texture.blit(s,(0,0))
         fen.blit(texture,(options["fen"]["width"]-32*9+32*i,options["fen"]["height"]-32))
+    if(invOpen):
+        for i in range(9):
+            for j in range(9):
+                xl = i*32
+                yl = j*32
+                x = options["fen"]["width"] - 9*32 + xl
+                y = options["fen"]["height"] - 9*32 + yl
+                fen.blit(inventory.tab[i][j].get_texture(),(x,y))
+        if(drag):
+            texture = Item.items[Item.nameToNumber[dragged_Item]].texture
+            x,y = pygame.mouse.get_pos()
+            x = x-drag_x
+            y = y-drag_y
+            fen.blit(texture,(x,y))
     classes.mobs.draw_mobs(fen,player,cmap,Tile)
     img = font.render('VERSION ALPHA - MMORPG + EDITOR - Projet NSI', True, (255,255,255))
     fen.blit(img, (20, 32))
