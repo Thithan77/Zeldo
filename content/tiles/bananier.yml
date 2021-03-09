@@ -3,4 +3,4 @@ fileName : "bananier.png"
 doPass : false
 type : "surmap"
 breakable : true
-drop : "wood"
+drop : "banane"
