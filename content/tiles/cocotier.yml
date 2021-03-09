@@ -3,5 +3,4 @@ fileName : "cocotier.png"
 doPass : false
 type : "surmap"
 breakable : true
-drop :
-  - "wood"
+drop : "wood"
