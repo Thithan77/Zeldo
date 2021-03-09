@@ -2,3 +2,7 @@ name : "pommier"
 fileName : "Pommier.png"
 doPass : false
 type : "surmap"
+breakable : true
+drop :
+  - "wood"
+  - "pomme"
