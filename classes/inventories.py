@@ -10,6 +10,19 @@ class Inventory:
             self.tab.append([])
             for j in range(9):
                 self.tab[i].append(copy.copy(InventoryTile.tiles[InventoryTile.nameToNumber["storage"]]))
+    def add(self,what,hMany):
+        print("Adding {} {} times".format(what,hMany))
+        i = 0
+        while i<9:
+            if(self.tab[i][8].item == None):
+                print("None added")
+                self.tab[i][8].item = what
+                self.tab[i][8].count = hMany
+                i = 10
+            elif(self.tab[i][8].item == what):
+                self.tab[i][8].count += hMany
+                i = 10
+            i+=1
 def open_inventory(fen,inventory,options,player,Tile,map):
     inv_open = True
     while inv_open:

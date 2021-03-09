@@ -59,6 +59,16 @@ class Tile:
                 self.multiTile = False
                 self.fileName = None
                 self.texture = pygame.Surface((32,32)).fill((255,255,255))
+        if("breakable" in opt):
+            self.breakable = opt["breakable"]
+            print("Breaking")
+            if("drop" in opt):
+                self.drop = opt["drop"]
+            else:
+                self.drop = None
+        else:
+            self.breakable = False
+            self.drop = None
     def toString(self): # Renvoie toutes les informations sous forme de texte (pour le débug principalement)
         return("{} , id:{}".format(self.name,self.id))
 

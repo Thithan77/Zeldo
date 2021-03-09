@@ -62,6 +62,10 @@ dragged_Item = None
 dragged_Item_count = 0
 drag_coming_x = 0
 drag_coming_y = 0
+timeBreaking = time.time()
+breaking = False
+break_x = 0
+break_y = 0
 if(multi.get() == 1): # Si multiplayer est dans les argv (Example : le programme est lancé avec "python main.py multiplayer")
     print("Mode multijoueur enclenché")
     map = cmap.multiMap(Tile,sys.argv,player,pseudo) # gestion différente de la map qui est importée et actualisée depuis le serveur
@@ -101,6 +105,8 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                             inventory.tab[drag_coming_x][drag_coming_y].count = dragged_Item_count
                     else:
                         inventory.tab[drag_coming_x][drag_coming_y].count = dragged_Item_count
+                if(breaking):
+                    breaking = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             if(event.button == 2):
                 editor_click = True # On active le placement auto des tiles
@@ -124,7 +130,7 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                             inventory.tab[rx][ry].count = 0
                             drag_coming_x = rx
                             drag_coming_y = ry
-            if(event.button == 3 and invOpen):
+            elif(event.button == 3 and invOpen):
                 x0 = options["fen"]["width"] - 9*32
                 y0 = options["fen"]["height"] - 9*32
                 x,y = pygame.mouse.get_pos()
@@ -144,6 +150,15 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                             dragged_Item_count = toTake
                             drag_coming_x = rx
                             drag_coming_y = ry
+            elif(event.button == 1):
+                breaking = True
+                timeBreaking = time.time()
+                x,y= pygame.mouse.get_pos()
+                x,y = pygame.mouse.get_pos()
+                rx = int((x-(options["fen"]["width"]/2)+player.x*32)//32)
+                ry = int((y-(options["fen"]["height"]/2)+player.y*32)//32)
+                break_x = rx
+                break_y = ry
             inv = pygame.Rect(options["fen"]["width"]-32*9,options["fen"]["height"]-32,9*32,32)
             if(inv.collidepoint(pygame.mouse.get_pos())):
                 x,y = pygame.mouse.get_pos()
@@ -301,6 +316,21 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
             x = x-drag_x
             y = y-drag_y
             fen.blit(texture,(x,y))
+    if(breaking):
+        delta = time.time()-timeBreaking
+        r = int(delta/4*255)
+        if(delta >=4):
+            timeBreaking = time.time()
+            r = 0
+            dropped = Tile.tiles[map.gs(break_x,break_y)].drop
+            if(dropped != None):
+                inventory.add(dropped,1)
+            map.surmodify(break_x, break_y, Tile.nameToNumber["nada"])
+        x = break_x*32-player.x*32+options["fen"]["width"]/2
+        y = break_y*32-player.y*32+options["fen"]["height"]/2
+        s = pygame.Surface((32,32)).convert_alpha()
+        s.fill((r,0,0,100))
+        fen.blit(s,(x,y))
     classes.mobs.draw_mobs(fen,player,cmap,Tile)
     img = font.render('VERSION ALPHA - MMORPG + EDITOR - Projet NSI', True, (255,255,255))
     fen.blit(img, (20, 32))
