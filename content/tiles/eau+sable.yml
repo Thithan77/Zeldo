@@ -1,4 +1,4 @@
-sname : "eau+sable"
+name : "eau+sable"
 fileName : "eaune.png"
 doPass : true
 speed : 0.05
