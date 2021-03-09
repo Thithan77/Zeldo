@@ -324,7 +324,12 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
             r = 0
             dropped = Tile.tiles[map.gs(break_x,break_y)].drop
             if(dropped != None):
-                inventory.add(dropped,1)
+                print(type(dropped) == type([]))
+                if(type(dropped) == type([])):
+                    for i in dropped:
+                        inventory.add(i,1)
+                else:
+                    inventory.add(dropped,1)
             map.surmodify(break_x, break_y, Tile.nameToNumber["nada"])
         x = break_x*32-player.x*32+options["fen"]["width"]/2
         y = break_y*32-player.y*32+options["fen"]["height"]/2
