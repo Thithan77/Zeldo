@@ -1,0 +1,6 @@
+sname : "eau+sable"
+fileName : "eaune.png"
+doPass : true
+speed : 0.05
+type : "map"
+rotation : true
