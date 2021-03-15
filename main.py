@@ -1,10 +1,10 @@
 #coding:utf-8
 import pygame # import de pygame
-import tkinter
+import tkinter # import de tkinter
 from pygame.locals import * # import des constantes de Pygame comme QUIT
 from classes.bordel import * # On importe la libairie perso bordel (ya des trucs bordels dedans)
 import os # Plein de fonctions sytèmes utiles (geta)
-import sys
+import sys # Import de sys
 import socket # Socket pour le jeu en ligne
 pygame.init() # Initialisation de pygame
 #pygame.key.set_repeat(10, 16) # set_repeat(délais avant de repêter une touche,délais entre chaque répétition)
@@ -22,17 +22,16 @@ try:
 except:
     print("Erreur dans le chargement du fichier de configuration (existe-t-il ?)")
     sys.exit()
-tk = tkinter.Tk()
+# Petit launcher pour récupérer les informations de lancement
+tk = tkinter.Tk() # On créé la fenêtre tkinter
 tkinter.Label(tk,text="MMORPG Launcher").pack()
 pseudo = tkinter.StringVar()
 tkinter.Entry(tk,textvariable=pseudo).pack()
 multi = tkinter.IntVar()
 tkinter.Checkbutton(tk, text='Multiplayer',variable=multi).pack()
 tk.mainloop()
-print(multi.get())
-pseudo = pseudo.get()
-print(pseudo)
 fen = pygame.display.set_mode((options["fen"]["width"], options["fen"]["height"]),DOUBLEBUF) # On définit la fenêtre à la taille indiquée dans le fichier config
+pygame.display.set_caption("MMORPG")
 pygame.event.set_allowed([QUIT, KEYDOWN, KEYUP,MOUSEBUTTONUP,MOUSEBUTTONDOWN]) # On n'active pas tous les évènements pour gagner un peu en performance
 clock = pygame.time.Clock() # la clock qui permet de gérer les FPS (stonks)
 from init import * # On importe le fichier init ce qui a pour effet de lancer l'initialisation du jeu
@@ -50,18 +49,18 @@ tot = 0 # Le temps de jeu
 n = 0 # Le nombre de frames
 inventory = inventories.Inventory(InventoryTile)
 selected_inv = 8 # La case sélectionnée dans l'inventaire
-invOpen = False
-drag = False
-drag_x = 0
-drag_y = 0
-dragged_Item = None
-dragged_Item_count = 0
-drag_coming_x = 0
-drag_coming_y = 0
-timeBreaking = time.time()
-breaking = False
-break_x = 0
-break_y = 0
+invOpen = False # Si l'inventaire est ouvert
+drag = False # Si le joueur est en train de drag un item
+drag_x = 0 # le décalage x du drag avec la grille
+drag_y = 0 # Le décalage y du drag avec la grille
+dragged_Item = None # L'item en cours de drag
+dragged_Item_count = 0 # Le nombre d'item en cours de drag
+drag_coming_x = 0 # l'origine x dans l'inventaire de l'item draggé
+drag_coming_y = 0 # l'origine y dans l'inventaire de l'item draggé
+timeBreaking = time.time() # Début du cassage de bloc (ici on le définit à une valeur qui va changer)
+breaking = False # Si le joueur est en train de casser
+break_x = 0 # La position x de cassage
+break_y = 0 # La position y de cassage
 if(multi.get() == 1): # Si multiplayer est dans les argv (Example : le programme est lancé avec "python main.py multiplayer")
     print("Mode multijoueur enclenché")
     map = cmap.multiMap(Tile,sys.argv,player,pseudo) # gestion différente de la map qui est importée et actualisée depuis le serveur
@@ -77,7 +76,7 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
             if(event.button == 2): # Si c'est un clic molette
                 editor_click = False # On désactive la placement auto des tiles
             if(event.button == 1):
-                if(drag):
+                if(drag): # Drag d'un item dans l'inventaire
                     drag = False
                     x0 = options["fen"]["width"] - 9*32
                     y0 = options["fen"]["height"] - 9*32
