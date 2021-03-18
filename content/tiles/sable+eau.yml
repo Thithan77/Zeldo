@@ -1,0 +1,6 @@
+name : "sable+eau"
+fileName : "sablenw.png"
+doPass : true
+speed : 0.075
+type : "map"
+rotation : true

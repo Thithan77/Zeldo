@@ -7,6 +7,7 @@ except ImportError:
     from yaml import Loader, Dumper
 files = os.listdir("content\\tiles")
 for i in files:
+    print(i)
     inf = yaml.load(open("content\\tiles\\"+i,"r"),Loader=Loader)
     if(inf["doPass"] == True):
         inf["doPass"] = True
@@ -19,6 +20,7 @@ for i in Tile.tiles:
 from classes.Item import *
 files = os.listdir("content\\items")
 for i in files:
+    print(i)
     inf = yaml.load(open("content\\items\\"+i,"r"),Loader=Loader)
     Item(inf["name"],inf)
 for i in Item.items:

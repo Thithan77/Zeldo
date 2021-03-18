@@ -36,9 +36,39 @@ class Tile:
                 for i in [(False,False),(False,True),(True,True),(True,False)]:
                     texture = pygame.transform.flip(self.texture,i[0],i[1])
                     self.textures.append(texture)
+            self.multiTile = False
         else:
-            self.fileName = None
-            self.texture = pygame.Surface((32,32)).fill((255,255,255))
+            if("multiTile" in opt and opt["multiTile"]):
+                self.textures = []
+                self.multiTile = True
+                for i in opt["fileNames"]:
+                    texture2 = pygame.image.load("assets\\"+i).convert()
+                    texture2.set_colorkey((255,255,255))
+                    texture = pygame.Surface((32,32)).convert_alpha()
+                    texture.fill((0,0,0,0))
+                    texture.blit(texture2,(0,0,32,32))
+                    if("rotation" in opt and opt["rotation"]):
+                        textures = []
+                        for i in [(False,False),(False,True),(True,True),(True,False)]:
+                            textureowo = pygame.transform.flip(texture,i[0],i[1])
+                            textures.append(textureowo)
+                        self.textures.append(textures)
+                    else:
+                        self.textures.append(texture)
+            else:
+                self.multiTile = False
+                self.fileName = None
+                self.texture = pygame.Surface((32,32)).fill((255,255,255))
+        if("breakable" in opt):
+            self.breakable = opt["breakable"]
+            print("Breaking")
+            if("drop" in opt):
+                self.drop = opt["drop"]
+            else:
+                self.drop = None
+        else:
+            self.breakable = False
+            self.drop = None
     def toString(self): # Renvoie toutes les informations sous forme de texte (pour le débug principalement)
         return("{} , id:{}".format(self.name,self.id))
 

@@ -1,0 +1,10 @@
+name : "sableau"
+multiTile : True
+fileNames:
+  - "sableau1.png"
+  - "sableau2.png"
+  - "sableau3.png"
+doPass : true
+speed : 0.05
+type: "map"
+rotation: true

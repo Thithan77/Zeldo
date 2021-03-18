@@ -1,0 +1,6 @@
+name : "Palmier"
+fileName : "palmier.png"
+doPass : false
+type : "surmap"
+breakable : true
+drop : "wood"

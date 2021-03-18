@@ -1,83 +1,60 @@
 import socket
-import pickle
+import _thread
+import sys
 import json
-import time
-from _thread import *
-n = 0
-ss = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-ss.bind(("127.0.0.1", 8081))
-ss.listen(5)
-modifs = []
-clients = []
-poses = {}
+import copy
+server = "192.168.1.48"
+port = 8081
+
+s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+updates = {}
+positions = {}
+try:
+    s.bind((server,port))
+except socket.error as e:
+    str(e)
 conversion,map,surmap = json.loads(open("..\\map.json",'r').read()) # on charge la map depuis le fichier
+s.listen(2)
+print("Server started ! Waiting for connexion ...")
+
 def threaded_client(conn):
-    global map,surmap
+    print("New client !")
+    updates[conn.getpeername()] = []
+    positions[conn.getpeername()] = (0,0,"uwu")
     while True:
-        try:
-            try:
-                data = conn.recv(2048*32).decode("utf-8")
-            except ConnectionResetError:
-                print("Disconnected")
-                clients.remove(conn)
-                break
-            if not data:
-                print("Disconnected")
-                clients.remove(conn)
-                break
-            else:
-                #print(data)
-                data = json.loads(data)
-                if(data[0] == "mod"):
-                    if(data[1] == "map"):
-                        map[data[2]][data[3]] = data[4]
-                        modifs.append((data,conn))
-                    if(data[1] == "surmap"):
-                        surmap[data[2]][data[3]] = data[4]
-                        modifs.append((data,conn))
-                elif(data[0] == "pos"):
-                    poses[conn.getpeername()] = (data[1],data[2])
-        except error as e:
-            break
-            print(e)
-def server_thread():
-    global modifs
-
-    while True:
-        time.sleep(0.01)
-        print(clients)
-        try:
-            toSend = []
-            uwu = modifs
-            if(len(modifs) > 0):
-                for i,j in enumerate(modifs):
-                    o = modifs.pop(i)
-                    t = json.dumps(o[0]).encode()
-                    for u in clients:
-                        u.send(t)
-            modifs = []
-            l = []
-            for i,j in enumerate(poses):
-                l.append(poses[j])
-            s = json.dumps(("pos",l)).encode()
-            h = []
-            for i in l:
-                h.append(i)
-            o = json.dumps(("pos",l)).encode()
-            for u in clients:
-                u.send(o)
-        except error as e:
-            print(e)
-start_new_thread(server_thread,())
+        data = conn.recv(2048).decode()
+        jzon = json.loads(data)
+        #print(f"Data : {data}")
+        for u in jzon:
+            #print(f"u: {u}")
+            for i,j in enumerate(updates):
+                if(j != conn.getpeername()):
+                    if(u[0] != "pos"):
+                        updates[j].append(u)
+            if(u[0] == "modmap"):
+                map[u[1]][u[2]] = u[3]
+            elif(u[0] == "modsurmap"):
+                surmap[u[1]][u[2]] = u[3]
+            elif(u[0] == "pos"):
+                positions[conn.getpeername()] = (u[1],u[2],u[3])
+        reply = updates[conn.getpeername()]
+        for i,j in enumerate(positions):
+            if(j!=conn.getpeername()):
+                u = positions[j]
+                reply.append(("pos",u[0],u[1],u[2]))
+        updates[conn.getpeername()] = []
+        if not data:
+            print(f"client {conn.getpeername()} disconnected")
+            del updates[conn.getpeername()]
+            del positions[conn.getpeername()]
+        else:
+            """
+            print(f"Received {data}")
+            print(f"Sending {reply}")
+            """
+        conn.send(str.encode(json.dumps(reply)))
 while True:
-    try:
-        conn , addr = ss.accept()
-        print("{} connected".format(addr))
-        jzon = json.dumps((conversion,map,surmap))
-        conn.send(jzon.encode())
-        n+=1
-        start_new_thread(threaded_client,(conn,))
-        clients.append(conn)
-
-    except error as e:
-        print(e)
+    conn,addr = s.accept()
+    conn.send(str.encode(json.dumps((conversion,map,surmap))))
+    print(f"{addr} just connected !")
+    _thread.start_new_thread(threaded_client,(conn,))

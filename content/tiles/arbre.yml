@@ -2,3 +2,5 @@ name : "arbre"
 fileName : "Arbre de base.png"
 doPass : false
 type : "surmap"
+breakable : true
+drop : "wood"
