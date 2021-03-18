@@ -31,6 +31,7 @@ if("multiplayer" in sys.argv): # Si multiplayer est dans les argv (Example : le 
     map = cmap.multiMap(Tile,sys.argv) # gestion différente de la map qui est importée et actualisée depuis le serveur
 else:
     map = cmap.Map(Tile,sys.argv)
+classes.mobs.start(Tile,map)
 font = pygame.font.SysFont(None, 24) # On charge la police d'écriture
 playing = True # variable pour la boucle principale du jeu
 editor_click = False # grosso modo si le clic est enfoncé ça permet de poser plusieurs cases à la suite
@@ -189,7 +190,7 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
             s.fill((255,0,0,100))
             texture.blit(s,(0,0))
         fen.blit(texture,(options["fen"]["width"]-32*9+32*i,options["fen"]["height"]-32))
-    classes.mobs.draw_mobs(fen,player,cmap,Tile)
+    classes.mobs.draw_mobs(fen,player,cmap,Tile,options)
     img = font.render('VERSION ALPHA - MMORPG + EDITOR - Projet NSI', True, (255,255,255))
     fen.blit(img, (20, 32))
     img = font.render('PosX: {}'.format(player.x), True, (255,255,255))
