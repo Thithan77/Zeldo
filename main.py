@@ -217,7 +217,10 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
             if event.key == K_r:
                 for i,j in enumerate(Tile.tiles):
                     if(j.fileName):
-                        j.texture2 = pygame.image.load("assets\\"+j.fileName).convert_alpha()
+                        if(sys.platform == "linux"):
+                            j.texture2 = pygame.image.load("assets/"+j.fileName).convert_alpha()
+                        else:
+                            j.texture2 = pygame.image.load("assets\\"+j.fileName).convert_alpha()
                         j.texture2.set_colorkey((255,255,255))
                         j.texture = pygame.Surface((32,32)).convert_alpha()
                         j.texture.fill((0,0,0,0))

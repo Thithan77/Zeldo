@@ -1,6 +1,7 @@
 #coding:utf-8
 # Définition de la classe Tile
 import pygame
+import sys
 class Tile:
     n = 0 #Indique le nombre d'instances aka le nombre de tiles qu'on a (permet de définir des ids dynamiques sans problème)
     nameToNumber = {} # Un dictionnaire qui associe le nom à l'id
@@ -25,7 +26,11 @@ class Tile:
             self.type = "map"
         if("fileName" in opt):
             self.fileName = opt["fileName"]
-            self.texture2 = pygame.image.load("assets\\"+opt["fileName"]).convert()
+            if(sys.platform == "linux"):
+                print(opt["fileName"])
+                self.texture2 = pygame.image.load("assets/"+opt["fileName"]).convert()
+            else:
+                self.texture2 = pygame.image.load("assets\\"+opt["fileName"]).convert()
             self.texture2.set_colorkey((255,255,255))
             self.texture = pygame.Surface((32,32)).convert_alpha()
             self.texture.fill((0,0,0,0))
@@ -42,7 +47,10 @@ class Tile:
                 self.textures = []
                 self.multiTile = True
                 for i in opt["fileNames"]:
-                    texture2 = pygame.image.load("assets\\"+i).convert()
+                    if(sys.platform == "linux"):
+                        texture2 = pygame.image.load("assets/"+i).convert()
+                    else:
+                        texture2 = pygame.image.load("assets\\"+i).convert()
                     texture2.set_colorkey((255,255,255))
                     texture = pygame.Surface((32,32)).convert_alpha()
                     texture.fill((0,0,0,0))

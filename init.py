@@ -1,14 +1,21 @@
 from classes.Tile import *
 import yaml
 import os
+import sys
 try:
     from yaml import CLoader as Loader, CDumper as Dumper
 except ImportError:
     from yaml import Loader, Dumper
-files = os.listdir("content\\tiles")
+if(sys.platform == "linux"):
+    files = os.listdir("content/tiles")
+else:
+    files = os.listdir("content\\tiles")
 for i in files:
     print(i)
-    inf = yaml.load(open("content\\tiles\\"+i,"r"),Loader=Loader)
+    if(sys.platform == "linux"):
+        inf = yaml.load(open("content/tiles/"+i,"r"),Loader=Loader)
+    else:
+        inf = yaml.load(open("content\\tiles\\"+i,"r"),Loader=Loader)
     if(inf["doPass"] == True):
         inf["doPass"] = True
     else:
@@ -18,10 +25,16 @@ for i in Tile.tiles:
     print(i.toString())
 
 from classes.Item import *
-files = os.listdir("content\\items")
+if(sys.platform == "linux"):
+    files = os.listdir("content/items")
+else:
+    files = os.listdir("content\\items")
 for i in files:
     print(i)
-    inf = yaml.load(open("content\\items\\"+i,"r"),Loader=Loader)
+    if(sys.platform == "linux"):
+        inf = yaml.load(open("content/items/"+i,"r"),Loader=Loader)
+    else:
+        inf = yaml.load(open("content\\items\\"+i,"r"),Loader=Loader)
     Item(inf["name"],inf)
 for i in Item.items:
     print(i.toString())

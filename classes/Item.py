@@ -1,4 +1,5 @@
 import pygame
+import sys
 class Item:
     """
     La classe item
@@ -17,7 +18,10 @@ class Item:
         Item.nameToNumber[self.name] = self.id
         if("fileName" in opt):
             self.fileName = opt["fileName"]
-            self.texture2 = pygame.image.load("assets\\"+opt["fileName"]).convert()
+            if(sys.platform == "linux"):
+                self.texture2 = pygame.image.load("assets/"+opt["fileName"]).convert()
+            else:
+                self.texture2 = pygame.image.load("assets\\"+opt["fileName"]).convert()
             self.texture2.set_colorkey((255,255,255))
             self.texture = pygame.Surface((32,32)).convert_alpha()
             self.texture.fill((0,0,0,0))
