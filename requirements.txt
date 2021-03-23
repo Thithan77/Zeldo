@@ -2,3 +2,4 @@ pygame
 pyyaml
 perlin-noise
 cython
+pypresence

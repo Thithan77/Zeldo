@@ -32,6 +32,11 @@ tkinter.Checkbutton(tk, text='Multiplayer',variable=multi).pack()
 tk.mainloop()
 fen = pygame.display.set_mode((options["fen"]["width"], options["fen"]["height"]),DOUBLEBUF) # On définit la fenêtre à la taille indiquée dans le fichier config
 pygame.display.set_caption("MMORPG")
+if(sys.platform == "linux"):
+    icon = pygame.image.load("assets/Logo.png")
+else:
+    icon = pygame.image.load("assets\\Logo.png")
+pygame.display.set_icon(icon)
 pygame.event.set_allowed([QUIT, KEYDOWN, KEYUP,MOUSEBUTTONUP,MOUSEBUTTONDOWN]) # On n'active pas tous les évènements pour gagner un peu en performance
 clock = pygame.time.Clock() # la clock qui permet de gérer les FPS (stonks)
 from init import * # On importe le fichier init ce qui a pour effet de lancer l'initialisation du jeu
@@ -41,6 +46,13 @@ if("multiplayer" in sys.argv): # Si multiplayer est dans les argv (Example : le 
 else:
     map = cmap.Map(Tile,sys.argv)
 classes.mobs.start(Tile,map)
+import pypresence
+try:
+    dPresence = pypresence.Presence("823840156939190292");
+    dPresence.connect()
+    dPresence.update(start=time.time(),state="En jeu",details="Pseudo: {}".format(pseudo.get()),large_image="logo",small_image="perso",join="trololololo",party_size=[1,4],party_id="1234")
+except:
+    print("Discord Rich Presence n'a pas pu être chargé.")
 font = pygame.font.SysFont(None, 24) # On charge la police d'écriture
 playing = True # variable pour la boucle principale du jeu
 editor_click = False # grosso modo si le clic est enfoncé ça permet de poser plusieurs cases à la suite
