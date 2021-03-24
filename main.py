@@ -30,6 +30,7 @@ tkinter.Entry(tk,textvariable=pseudo).pack()
 multi = tkinter.IntVar()
 tkinter.Checkbutton(tk, text='Multiplayer',variable=multi).pack()
 tk.mainloop()
+del tk
 fen = pygame.display.set_mode((options["fen"]["width"], options["fen"]["height"]),DOUBLEBUF) # On définit la fenêtre à la taille indiquée dans le fichier config
 pygame.display.set_caption("MMORPG")
 if(sys.platform == "linux"):
@@ -47,12 +48,19 @@ else:
     map = cmap.Map(Tile,sys.argv)
 classes.mobs.start(Tile,map)
 import pypresence
+"""
+def event_test(a):
+    print(f"Yeaaaaaaaah j'ai eu {a} c'est trop cool")
 try:
     dPresence = pypresence.Presence("823840156939190292");
     dPresence.connect()
-    dPresence.update(start=time.time(),state="En jeu",details="Pseudo: {}".format(pseudo.get()),large_image="logo",small_image="perso",join="trololololo",party_size=[1,4],party_id="1234")
+    dPresence.update(start=time.time(),state="En jeu",details="Pseudo: {}".format(pseudo.get()),large_image="logo",small_image="perso",join="trololololo")
 except:
     print("Discord Rich Presence n'a pas pu être chargé.")
+dClient = pypresence.Client("823840156939190292")
+dClient.start()
+dClient.register_event("ACTIVITY_JOIN", event_test, args={})
+"""
 font = pygame.font.SysFont(None, 24) # On charge la police d'écriture
 playing = True # variable pour la boucle principale du jeu
 editor_click = False # grosso modo si le clic est enfoncé ça permet de poser plusieurs cases à la suite
@@ -225,6 +233,13 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                     bouton.pack()
                 tkinter.Button(tk,text="Page suivante",command=partial(next,tk,page,Tile.tiles,id)).pack()
                 tkinter.Button(tk,text="Page précédente",command=partial(past,tk,page,Tile.tiles,id)).pack()
+                tk.mainloop()
+            if event.key == K_j:
+                tk = tkinter.Tk()
+                tkinter.Button(tk,text="New Game",command=partial(join,tk,"newGame",map)).pack()
+                gamen = tkinter.StringVar()
+                tkinter.Entry(tk,textvariable=gamen).pack()
+                tkinter.Button(tk,text="Join",command=partial(join,tk,gamen,map)).pack()
                 tk.mainloop()
             if event.key == K_r:
                 for i,j in enumerate(Tile.tiles):

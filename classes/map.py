@@ -16,16 +16,29 @@ def threaded_map(player,pseudo):
             multiMap.updates = []
             jzon = json.dumps(updates)
             multiMap.socket.send(jzon.encode())
-            data = multiMap.socket.recv(2048*16).decode("utf-8")
-            data = json.loads(data)
+            rcv = True
+            while rcv:
+                try:
+                    data = multiMap.socket.recv(2048*16)
+                    print(data.decode())
+                    dataJ = json.loads(data.decode("utf-8"))
+                except json.JSONDecodeError as e:
+                    print(e)
+                    print("Et on repart pour un tour !")
+                    data+= multiMap.socket.recv(2048*250)
+                else:
+                    rcv = False
             newothers = []
-            for i in data:
+            for i in dataJ:
                 if(i[0] == "modmap"):
                     multiMap.map[i[1]][i[2]] = i[3]
                 elif(i[0] == "modsurmap"):
                     multiMap.surmap[i[1]][i[2]] = i[3]
                 elif(i[0] == "pos"):
                     newothers.append((i[1],i[2],i[3]))
+                elif(i[0] == "newMap"):
+                    conversion,map,surmap = i[1]
+                    multiMap.socket.send("oki".encode("utf-8"))
             others = copy.copy(newothers)
         except error as e:
             print(e)
@@ -82,15 +95,23 @@ class multiMap:
     socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     updates = []
     def __init__(self,a,b,player,pseudo):
-        self.server = "89.89.197.173"
+        self.server = "192.168.1.48"
         self.port = 8081
         self.addr = (self.server,self.port)
         self.pseudo = pseudo
         multiMap.socket.connect(self.addr)
         self.font = pygame.font.SysFont(None, 14)
         recv = multiMap.socket.recv(2048*250).decode("utf-8")
-        multiMap.conv,multiMap.map,multiMap.surmap = json.loads(recv)
-        start_new_thread(threaded_map,(player,pseudo))
+        map_loaded = False
+        while not map_loaded:
+            try:
+                multiMap.conv,multiMap.map,multiMap.surmap = json.loads(recv)
+                map_loaded = True
+                print("test")
+            except json.JSONDecodeError:
+                recv+= multiMap.socket.recv(2048*250).decode("utf-8")
+        start_new_thread(threaded_map,(player,pseudo.get()))
+
     def gm(self,i,j):
         xchunk = i//32
         ychunk = j//32

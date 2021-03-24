@@ -34,3 +34,8 @@ def globalToLocalCoord(x,y,playerx,playery,options):
     rx = (x+(options["fen"]["width"]/2)-playerx*32)
     ry = (y+(options["fen"]["height"]/2)-playery*32)
     return rx,ry
+def join(tk,game,map):
+    if(game == "newGame"):
+        map.updates.append(("changeMap",game))
+    elif(game.get() != ""):
+        map.updates.append(("changeMap",game.get()))
