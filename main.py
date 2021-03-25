@@ -48,7 +48,6 @@ else:
     map = cmap.Map(Tile,sys.argv)
 classes.mobs.start(Tile,map)
 import pypresence
-"""
 def event_test(a):
     print(f"Yeaaaaaaaah j'ai eu {a} c'est trop cool")
 try:
@@ -60,7 +59,6 @@ except:
 dClient = pypresence.Client("823840156939190292")
 dClient.start()
 dClient.register_event("ACTIVITY_JOIN", event_test, args={})
-"""
 font = pygame.font.SysFont(None, 24) # On charge la police d'écriture
 playing = True # variable pour la boucle principale du jeu
 editor_click = False # grosso modo si le clic est enfoncé ça permet de poser plusieurs cases à la suite

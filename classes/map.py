@@ -17,15 +17,19 @@ def threaded_map(player,pseudo):
             jzon = json.dumps(updates)
             multiMap.socket.send(jzon.encode())
             rcv = True
+            data = multiMap.socket.recv(2048*16).decode("utf-8")
+            print(data)
+            if("][" in data):
+                data = data.split("][")[0] + "]"
             while rcv:
                 try:
-                    data = multiMap.socket.recv(2048*16)
-                    print(data.decode())
-                    dataJ = json.loads(data.decode("utf-8"))
+                    if(data != "" or data != "[][]"):
+                        dataJ = json.loads(data)
                 except json.JSONDecodeError as e:
                     print(e)
                     print("Et on repart pour un tour !")
-                    data+= multiMap.socket.recv(2048*250)
+                    data+= multiMap.socket.recv(2048*16).decode()
+                    print(data)
                 else:
                     rcv = False
             newothers = []
@@ -37,8 +41,11 @@ def threaded_map(player,pseudo):
                 elif(i[0] == "pos"):
                     newothers.append((i[1],i[2],i[3]))
                 elif(i[0] == "newMap"):
-                    conversion,map,surmap = i[1]
+                    multiMap.conv,multiMap.map,multiMap.surmap = i[1]
+                    print(f"Hey :{multiMap.surmap}")
+                    print("Chargement de la map terminé !")
                     multiMap.socket.send("oki".encode("utf-8"))
+                    print("Oki envoyé")
             others = copy.copy(newothers)
         except error as e:
             print(e)
@@ -95,7 +102,7 @@ class multiMap:
     socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     updates = []
     def __init__(self,a,b,player,pseudo):
-        self.server = "192.168.1.48"
+        self.server = "89.89.197.173"
         self.port = 8081
         self.addr = (self.server,self.port)
         self.pseudo = pseudo

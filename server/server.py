@@ -15,13 +15,13 @@ try:
 except socket.error as e:
     str(e)
 if(sys.platform == "linux"):
-    conversion,map,surmap = json.loads(open("../map.json",'r').read()) # on charge la map depuis le fichier
+    conversion,mapo,surmapo = json.loads(open("../map.json",'r').read()) # on charge la map depuis le fichier
 else:
-    conversion,map,surmap = json.loads(open("..\\map.json",'r').read()) # on charge la map depuis le fichier
+    conversion,mapo,surmapo = json.loads(open("..\\map.json",'r').read()) # on charge la map depuis le fichier
 maps = {}
 maps["main"] = {}
-maps["main"]["map"] = map
-maps["main"]["surmap"] = surmap
+maps["main"]["map"] = copy.copy(mapo)
+maps["main"]["surmap"] = copy.copy(surmapo)
 maps["main"]["updates"] = {}
 maps["main"]["positions"] = {}
 s.listen(2)
@@ -45,15 +45,16 @@ def threaded_client(conn):
             break
         #print(f"Data : {data}")
         for u in jzon:
+            print(u)
             #print(f"u: {u}")
             for i,j in enumerate(updates):
                 if(j != conn.getpeername()):
                     if(u[0] != "pos"):
                         maps[map]["updates"][j].append(u)
             if(u[0] == "modmap"):
-                map[u[1]][u[2]] = u[3]
+                maps[map]["map"][u[1]][u[2]] = u[3]
             elif(u[0] == "modsurmap"):
-                surmap[u[1]][u[2]] = u[3]
+                maps[map]["surmap"][u[1]][u[2]] = u[3]
             elif(u[0] == "pos"):
                 maps[map]["positions"][conn.getpeername()] = (u[1],u[2],u[3])
             elif(u[0] == "changeMap"):
@@ -63,16 +64,23 @@ def threaded_client(conn):
                     map = rand
                     if(rand not in maps):
                         maps[rand] = {}
-                        maps[rand]["map"] = map
-                        maps[rand]["surmap"] = surmap
+                        maps[rand]["map"] = copy.copy(mapo)
+                        maps[rand]["surmap"] = copy.copy(surmapo)
+                        maps[rand]["map"][4][4] = 6
                         maps[rand]["updates"] = {}
                         maps[rand]["positions"] = {}
-                        conn.send(str.encode(json.dumps(("newMap",(conversion,map,surmap)))))
+                        maps[map]["updates"][conn.getpeername()] = []
+                        maps[map]["positions"][conn.getpeername()] = (0,0,"uwu")
+                        updates2 = []
+                        updates2.append(("newMap",(conversion,maps["main"]["map"],maps["main"]["surmap"])))
+                        conn.send(str.encode(json.dumps((updates2))))
                         print("Uwu")
                         print(conn.recv(2048).decode())
                 else:
-                    map = u[1]
+                    map = int(u[1])
+        print(map)
         reply = maps[map]["updates"][conn.getpeername()]
+        print(reply)
         for i,j in enumerate(positions):
             if(j!=conn.getpeername()):
                 u = maps[map]["positions"][j]
@@ -90,6 +98,7 @@ def threaded_client(conn):
         conn.send(str.encode(json.dumps(reply)))
 while True:
     conn,addr = s.accept()
-    conn.send(str.encode(json.dumps((conversion,map,surmap))))
+    print("dtatatatatatat")
+    conn.send(str.encode(json.dumps((conversion,maps["main"]["map"],maps["main"]["surmap"]))))
     print(f"{addr} just connected !")
     _thread.start_new_thread(threaded_client,(conn,))
