@@ -1,0 +1,6 @@
+name : "moai"
+fileName : "moai.png"
+doPass : false
+type : "surmap"
+breakable : true
+drop : "roche"
