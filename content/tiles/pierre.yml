@@ -1,0 +1,6 @@
+name : "Pierre"
+fileName : "pierre.png"
+doPass : false
+type : "surmap"
+breakable : true
+drop : "roche"

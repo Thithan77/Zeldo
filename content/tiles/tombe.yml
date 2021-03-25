@@ -1,0 +1,6 @@
+name : "Tombe"
+fileName : "tombe.png"
+doPass : false
+type : "surmap"
+breakable : true
+drop : "roche"
