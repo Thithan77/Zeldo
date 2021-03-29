@@ -102,7 +102,7 @@ class multiMap:
     socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     updates = []
     def __init__(self,a,b,player,pseudo):
-        self.server = "89.89.197.173"
+        self.server = "192.168.1.82"
         self.port = 8081
         self.addr = (self.server,self.port)
         self.pseudo = pseudo

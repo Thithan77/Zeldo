@@ -4,7 +4,7 @@ import sys
 import json
 import copy
 from random import randint
-server = "192.168.1.48"
+server = "192.168.1.82"
 port = 8081
 
 s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
@@ -45,7 +45,6 @@ def threaded_client(conn):
             break
         #print(f"Data : {data}")
         for u in jzon:
-            print(u)
             #print(f"u: {u}")
             for i,j in enumerate(updates):
                 if(j != conn.getpeername()):
@@ -61,6 +60,7 @@ def threaded_client(conn):
                 if(u[1] == "newGame"):
                     print("Nouvelle map")
                     rand = randint(1,10000)
+                    old_map = map
                     map = rand
                     if(rand not in maps):
                         maps[rand] = {}
@@ -71,6 +71,7 @@ def threaded_client(conn):
                         maps[rand]["positions"] = {}
                         maps[map]["updates"][conn.getpeername()] = []
                         maps[map]["positions"][conn.getpeername()] = (0,0,"uwu")
+                        del maps[old_map]["positions"][conn.getpeername]
                         updates2 = []
                         updates2.append(("newMap",(conversion,maps["main"]["map"],maps["main"]["surmap"])))
                         conn.send(str.encode(json.dumps((updates2))))
@@ -78,10 +79,8 @@ def threaded_client(conn):
                         print(conn.recv(2048).decode())
                 else:
                     map = int(u[1])
-        print(map)
         reply = maps[map]["updates"][conn.getpeername()]
-        print(reply)
-        for i,j in enumerate(positions):
+        for i,j in enumerate(maps[map]["positions"]):
             if(j!=conn.getpeername()):
                 u = maps[map]["positions"][j]
                 reply.append(("pos",u[0],u[1],u[2]))
@@ -95,10 +94,10 @@ def threaded_client(conn):
             print(f"Received {data}")
             print(f"Sending {reply}")
             """
+        print(f"Reply : {reply}")
         conn.send(str.encode(json.dumps(reply)))
 while True:
     conn,addr = s.accept()
-    print("dtatatatatatat")
     conn.send(str.encode(json.dumps((conversion,maps["main"]["map"],maps["main"]["surmap"]))))
     print(f"{addr} just connected !")
     _thread.start_new_thread(threaded_client,(conn,))
