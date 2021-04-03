@@ -317,10 +317,16 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                         xy = int(yz+xz)
                         texture = case.textures[xy%len(case.textures)][rot]
                     else:
-                        texture = case.textures[rot]
+                        try:
+                            texture = case.textures[rot]
+                        except AttributeError:
+                            texture = Tile.tiles[0].texture
                     fen.blit(texture,((j)*32-xc,(i)*32-yc))
                 if(Tile.tiles[map.gs(int(xz-1),int(yz-1))].name != "nada"):
-                    texture = Tile.tiles[map.gs(int(xz-1),int(yz-1))].texture
+                    try:
+                        texture = Tile.tiles[map.gs(int(xz-1),int(yz-1))].texture
+                    except AttributeError:
+                        texture = Tile.tiles[0].texture
                     fen.blit(texture,((j)*32-xc,(i)*32-yc))
             x+=32
         x = xmin
