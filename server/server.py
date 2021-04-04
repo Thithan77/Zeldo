@@ -3,6 +3,7 @@ import _thread
 import sys
 import json
 import copy
+import tkinter
 from random import randint
 server = "192.168.1.82"
 port = 8081
@@ -71,7 +72,7 @@ def threaded_client(conn):
                         maps[rand]["positions"] = {}
                         maps[map]["updates"][conn.getpeername()] = []
                         maps[map]["positions"][conn.getpeername()] = (0,0,"uwu")
-                        del maps[old_map]["positions"][conn.getpeername]
+                        del maps[old_map]["positions"][conn.getpeername()]
                         updates2 = []
                         updates2.append(("newMap",(conversion,maps["main"]["map"],maps["main"]["surmap"])))
                         conn.send(str.encode(json.dumps((updates2))))
@@ -84,6 +85,7 @@ def threaded_client(conn):
             if(j!=conn.getpeername()):
                 u = maps[map]["positions"][j]
                 reply.append(("pos",u[0],u[1],u[2]))
+        reply.append(("mapName",map))
         maps[map]["updates"][conn.getpeername()] = []
         if not data:
             print(f"client {conn.getpeername()} disconnected")

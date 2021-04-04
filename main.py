@@ -384,6 +384,8 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
     FPS = str(int(clock.get_fps()))
     img = font.render('FPS: {}'.format(FPS), True, (255,255,255))
     fen.blit(img, (20, 128))
+    img = font.render('Server: {}'.format(map.getServer()), True, (255,255,255))
+    fen.blit(img, (20, 160))
     pygame.display.flip()
     #os.system("pause")
     tot += (time.time() - lastTime)

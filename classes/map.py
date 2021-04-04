@@ -46,6 +46,8 @@ def threaded_map(player,pseudo):
                     print("Chargement de la map terminé !")
                     multiMap.socket.send("oki".encode("utf-8"))
                     print("Oki envoyé")
+                elif(i[0] == "mapName"):
+                    multiMap.serverName = i[1]
             others = copy.copy(newothers)
         except error as e:
             print(e)
@@ -83,6 +85,8 @@ class Map:
                         self.map[i][j] = Tile.nameToNumber["gazon"]
                     if(k > 0.25):
                         self.surmap[i][j] = Tile.nameToNumber["arbre"]
+    def getServer(self):
+        return "local"
     def gm(self,i,j):
         xchunk = i//32
         ychunk = j//32
@@ -101,8 +105,9 @@ class multiMap:
     map,surmap,conv = [],[],[]
     socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     updates = []
+    serverName = "main"
     def __init__(self,a,b,player,pseudo):
-        self.server = "172.16.23.179"
+        self.server = "192.168.1.82"
         self.port = 8081
         self.addr = (self.server,self.port)
         self.pseudo = pseudo
@@ -143,3 +148,5 @@ class multiMap:
             fen.blit(player.texture,(rx,ry))
             img = self.font.render(i[2], True, (255,255,255))
             fen.blit(img, (rx, ry-8))
+    def getServer(self):
+        return multiMap.serverName
