@@ -1,0 +1,6 @@
+name : "torche"
+fileName : "torch.png"
+doPass : true
+type : "surmap"
+breakable : false
+lightness: 1

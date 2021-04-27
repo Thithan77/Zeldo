@@ -1,4 +1,5 @@
 #coding:utf-8
+# In memorian Mr Ramaholiarison
 import pygame # import de pygame
 import tkinter # import de tkinter
 from pygame.locals import * # import des constantes de Pygame comme QUIT
@@ -37,8 +38,11 @@ fen = pygame.display.set_mode((options["fen"]["width"], options["fen"]["height"]
 pygame.display.set_caption("MMORPG")
 if(sys.platform == "linux"):
     icon = pygame.image.load("assets/Logo.png")
+    light = pygame.image.load("assets/circle.png")
 else:
     icon = pygame.image.load("assets\\Logo.png")
+    light = pygame.image.load("assets\\circle.png")
+
 pygame.display.set_icon(icon)
 pygame.event.set_allowed([QUIT, KEYDOWN, KEYUP,MOUSEBUTTONUP,MOUSEBUTTONDOWN]) # On n'active pas tous les évènements pour gagner un peu en performance
 clock = pygame.time.Clock() # la clock qui permet de gérer les FPS (stonks)
@@ -56,7 +60,7 @@ if(discord.get() == 1):
     try:
         dPresence = pypresence.Presence("823840156939190292");
         dPresence.connect()
-        dPresence.update(start=time.time(),state="En jeu",details="Pseudo: {}".format(pseudo.get()),large_image="logo",small_image="perso",join="trololololo")
+        dPresence.update(start=time.time(),state="En jeu",details="Pseudo: {}".format(pseudo.get()),large_image="logo",small_image="perso",party_id="main",join="trololololo")
         dClient = pypresence.Client("823840156939190292")
         dClient.start()
         dClient.register_event("ACTIVITY_JOIN", event_test, args={})
@@ -289,6 +293,8 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
     lin = int(options["fen"]["width"]//32+3)
     xmin = player.x*32-(options["fen"]["width"]/2)+32
     ymin = player.y*32-(options["fen"]["height"]/2)+32
+    filter = pygame.surface.Surface((options["fen"]["width"], options["fen"]["height"]))
+    filter.fill((150,150,150))
     x = xmin
     y = ymin
     for i in range(col):
@@ -302,6 +308,12 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                 xz = floor(x/32)
                 if(map.gm(int(xz-1),int(yz-1))%1 == 0):
                     case = Tile.tiles[map.gm(int(xz-1),int(yz-1))]
+                    if(case.lightness == 1):
+                        pygame.draw.circle(filter,(0, 0, 0),((j)*32-xc+16,(i)*32-yc+16),64)
+                        """filter.blit(light,((j)*32-xc-50,(i)*32-yc-50))
+                        filter.blit(light,((j)*32-xc-50+32,(i)*32-yc-50))
+                        filter.blit(light,((j)*32-xc-50+32,(i)*32-yc-50+32))
+                        filter.blit(light,((j)*32-xc-50,(i)*32-yc-50+32))"""
                     if(case.multiTile):
                         xy = int(yz+xz)
                         texture = case.textures[xy%len(case.textures)]
@@ -313,6 +325,8 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                     rot = int(map.gm(int(xz-1),int(yz-1))%1*10)
                     #print(rot)
                     case = Tile.tiles[int(map.gm(int(xz-1),int(yz-1))//1)]
+                    if(case.lightness == 1):
+                        pygame.draw.circle(filter,(0, 0, 0),((j)*32-xc+16,(i)*32-yc+16),64)
                     if(case.multiTile):
                         xy = int(yz+xz)
                         texture = case.textures[xy%len(case.textures)][rot]
@@ -325,6 +339,9 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                 if(Tile.tiles[map.gs(int(xz-1),int(yz-1))].name != "nada"):
                     try:
                         texture = Tile.tiles[map.gs(int(xz-1),int(yz-1))].texture
+                        case = Tile.tiles[map.gs(int(xz-1),int(yz-1))]
+                        if(case.lightness == 1):
+                            pygame.draw.circle(filter,(0, 0, 0),((j)*32-xc+16,(i)*32-yc+16),64)
                     except AttributeError:
                         texture = Tile.tiles[0].texture
                     fen.blit(texture,((j)*32-xc,(i)*32-yc))
@@ -333,6 +350,7 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
         y+=32
     fen.blit(player.texture,(options["fen"]["width"]/2-16,options["fen"]["height"]/2-16))
     map.draw_others(fen,player,options)
+    fen.blit(filter, (0, 0), special_flags=pygame.BLEND_RGB_SUB)
     for i in range(9):
         texture = inventory.tab[i][8].get_texture()
         if(i == selected_inv):

@@ -6,3 +6,4 @@ breakable : true
 drop :
   - "wood"
   - "coconut"
+lightness: 0

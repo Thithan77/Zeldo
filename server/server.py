@@ -74,12 +74,23 @@ def threaded_client(conn):
                         maps[map]["positions"][conn.getpeername()] = (0,0,"uwu")
                         del maps[old_map]["positions"][conn.getpeername()]
                         updates2 = []
-                        updates2.append(("newMap",(conversion,maps["main"]["map"],maps["main"]["surmap"])))
+                        updates2.append(("newMap",(conversion,maps[map]["map"],maps[map]["surmap"])))
                         conn.send(str.encode(json.dumps((updates2))))
                         print("Uwu")
                         print(conn.recv(2048).decode())
                 else:
+                    old_map = map
                     map = int(u[1])
+                    maps[map]["updates"][conn.getpeername()] = []
+                    maps[map]["positions"][conn.getpeername()] = (0,0,"uwu")
+                    del maps[old_map]["positions"][conn.getpeername()]
+                    updates2 = []
+                    updates2.append(("newMap",(conversion,maps[map]["map"],maps[map]["surmap"])))
+                    conn.send(str.encode(json.dumps((updates2))))
+                    print("Uwu")
+                    print(conn.recv(2048).decode())
+                    print(f"Trying to join {u[1]}")
+
         reply = maps[map]["updates"][conn.getpeername()]
         for i,j in enumerate(maps[map]["positions"]):
             if(j!=conn.getpeername()):

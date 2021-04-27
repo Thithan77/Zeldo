@@ -24,6 +24,10 @@ class Tile:
             self.type = opt["type"]
         else:
             self.type = "map"
+        if("lightness" in opt):
+            self.lightness = opt["lightness"]
+        else:
+            self.lightness = 0
         if("fileName" in opt):
             self.fileName = opt["fileName"]
             if(sys.platform == "linux"):

@@ -2,3 +2,4 @@ name : "lave"
 fileName : "lave.png"
 doPass : False
 type : "map"
+lightness : 1
