@@ -25,7 +25,7 @@ except:
     sys.exit()
 # Petit launcher pour récupérer les informations de lancement
 tk = tkinter.Tk() # On créé la fenêtre tkinter
-tkinter.Label(tk,text="MMORPG Launcher").pack()
+tkinter.Label(tk,text="Zeldo Launcher").pack()
 pseudo = tkinter.StringVar()
 tkinter.Entry(tk,textvariable=pseudo).pack()
 multi = tkinter.IntVar()
@@ -35,7 +35,7 @@ tkinter.Checkbutton(tk, text='Discord Rich Presence',variable=discord).pack()
 tk.mainloop()
 del tk
 fen = pygame.display.set_mode((options["fen"]["width"], options["fen"]["height"]),DOUBLEBUF) # On définit la fenêtre à la taille indiquée dans le fichier config
-pygame.display.set_caption("MMORPG")
+pygame.display.set_caption("Zeldo")
 if(sys.platform == "linux"):
     icon = pygame.image.load("assets/Logo.png")
     light = pygame.image.load("assets/circle.png")
@@ -60,7 +60,10 @@ if(discord.get() == 1):
     try:
         dPresence = pypresence.Presence("823840156939190292");
         dPresence.connect()
-        dPresence.update(start=time.time(),state="En jeu",details="Pseudo: {}".format(pseudo.get()),large_image="logo",small_image="perso",party_id="main",join="trololololo")
+        if(multi.get() == 1):
+            dPresence.update(start=time.time(),state="Dans une partie multijoueur",details="Pseudo: {}".format(pseudo.get()),large_image="logo",small_image="perso",party_id="ensah",join="mamamia")
+        else:
+            dPresence.update(start=time.time(),state="En solo",details="Pseudo: {}".format(pseudo.get()),large_image="logo",small_image="perso")
         dClient = pypresence.Client("823840156939190292")
         dClient.start()
         dClient.register_event("ACTIVITY_JOIN", event_test, args={})
@@ -92,6 +95,8 @@ timeBreaking = time.time() # Début du cassage de bloc (ici on le définit à un
 breaking = False # Si le joueur est en train de casser
 break_x = 0 # La position x de cassage
 break_y = 0 # La position y de cassage
+day_tick = 0 # Pour définir le jour et la nuit en comptant les ticks
+going = 10
 if(multi.get() == 1): # Si multiplayer est dans les argv (Example : le programme est lancé avec "python main.py multiplayer")
     print("Mode multijoueur enclenché")
     map = cmap.multiMap(Tile,sys.argv,player,pseudo) # gestion différente de la map qui est importée et actualisée depuis le serveur
@@ -100,6 +105,9 @@ else:
 while playing: # tant que le joueur joue on continue la boucle du jeu
     lastTime = time.time()
     placetick +=1
+    day_tick += going
+    if(day_tick == 0 or day_tick == 36000):
+        going = -going
     fen.fill((255,255,255)) # On met un fill blanc tout derrière
     speed = Tile.tiles[int(map.gm(int(player.x),int(player.y))//1)].speed # On récupère la vitesse de la case qui va servir de multiplicateur
     for event in pygame.event.get(): # les évènements
@@ -294,7 +302,8 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
     xmin = player.x*32-(options["fen"]["width"]/2)+32
     ymin = player.y*32-(options["fen"]["height"]/2)+32
     filter = pygame.surface.Surface((options["fen"]["width"], options["fen"]["height"]))
-    filter.fill((150,150,150))
+    lumiere = floor(day_tick/36000*150)
+    filter.fill((lumiere,lumiere,lumiere))
     x = xmin
     y = ymin
     for i in range(col):
@@ -393,7 +402,7 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
         s.fill((r,0,0,100))
         fen.blit(s,(x,y))
     classes.mobs.draw_mobs(fen,player,cmap,Tile,options)
-    img = font.render('VERSION ALPHA - MMORPG + EDITOR - Projet NSI', True, (255,255,255))
+    img = font.render('VERSION ALPHA - Zeldo + EDITOR - Projet NSI', True, (255,255,255))
     fen.blit(img, (20, 32))
     img = font.render('PosX: {}'.format(player.x), True, (255,255,255))
     fen.blit(img, (20, 64))
@@ -404,6 +413,17 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
     fen.blit(img, (20, 128))
     img = font.render('Server: {}'.format(map.getServer()), True, (255,255,255))
     fen.blit(img, (20, 160))
+    if(going < 0):
+        hour = (36000-day_tick)//3000
+        temp = (36000-day_tick)-(hour*3000)
+        minute = floor(temp/3000*60)
+    else:
+        hour = day_tick//3000
+        temp = day_tick-(hour*3000)
+        minute = floor(temp/3000*60)
+        hour+=12
+    img = font.render('Time: {}h{}'.format(hour,minute), True, (255,255,255))
+    fen.blit(img, (20, 192))
     pygame.display.flip()
     #os.system("pause")
     tot += (time.time() - lastTime)
