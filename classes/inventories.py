@@ -10,6 +10,14 @@ class Inventory:
             self.tab.append([])
             for j in range(9):
                 self.tab[i].append(copy.copy(InventoryTile.tiles[InventoryTile.nameToNumber["storage"]]))
+        self.tab[0][4] = copy.copy(InventoryTile.tiles[InventoryTile.nameToNumber["storage_helmet"]])
+        self.tab[0][5] = copy.copy(InventoryTile.tiles[InventoryTile.nameToNumber["storage_chest"]])
+        self.tab[0][6] = copy.copy(InventoryTile.tiles[InventoryTile.nameToNumber["storage_jambiere"]])
+        self.tab[0][7] = copy.copy(InventoryTile.tiles[InventoryTile.nameToNumber["storage_babouche"]])
+        self.tab[0][7].item = "Water Babouche"
+        self.tab[0][7].count = 1
+        self.tab[1][7].item = "Fire Babouche"
+        self.tab[1][7].count = 1
     def add(self,what,hMany):
         print("Adding {} {} times".format(what,hMany))
         i = 0

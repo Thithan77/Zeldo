@@ -29,5 +29,17 @@ class Item:
         else:
             self.fileName = None
             self.texture = pygame.Surface((32,32)).fill((255,255,255))
+        if("effects" in opt):
+            self.effects = opt["effects"]
+        else:
+            self.effects = []
+        if("textureonperso" in opt):
+            if(sys.platform == "linux"):
+                self.textureonperso = pygame.image.load("assets/"+opt["textureonperso"]).convert()
+            else:
+                self.textureonperso = pygame.image.load("assets\\"+opt["textureonperso"]).convert()
+            self.textureonperso.set_colorkey((255,255,255))
+        else:
+            self.textureonperso = None
     def toString(self): # Renvoie toutes les informations sous forme de texte (pour le débug principalement)
         return("{} , id:{}".format(self.name,self.id))

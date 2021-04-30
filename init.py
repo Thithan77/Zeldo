@@ -48,6 +48,14 @@ from content.inventories.python.storage import *
 storage(Item)
 from content.inventories.python.button import *
 button()
+from content.inventories.python.storage_babouche import *
+storage(Item)
+from content.inventories.python.storage_chest import *
+storage(Item)
+from content.inventories.python.storage_jambiere import *
+storage(Item)
+from content.inventories.python.storage_helmet import *
+storage(Item)
 from classes.inventories import *
 Inventory(InventoryTile)
 def it():

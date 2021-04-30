@@ -24,6 +24,10 @@ class Tile:
             self.type = opt["type"]
         else:
             self.type = "map"
+        if("needToPass" in opt): # L'effect dont on a besoin pour traverser cette tile
+            self.needToPass = opt["needToPass"]
+        else:
+            self.needToPass = ""
         if("lightness" in opt):
             self.lightness = opt["lightness"]
         else:

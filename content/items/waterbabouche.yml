@@ -1,0 +1,5 @@
+name: "Water Babouche"
+fileName : "water_babouches.png"
+effects:
+  - "water_walking"
+textureonperso: "baboucheonperso.png"

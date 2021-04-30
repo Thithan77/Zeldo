@@ -96,7 +96,8 @@ breaking = False # Si le joueur est en train de casser
 break_x = 0 # La position x de cassage
 break_y = 0 # La position y de cassage
 day_tick = 0 # Pour définir le jour et la nuit en comptant les ticks
-going = 10
+going = 1 # à 1 le temps augmente à -1 il diminue
+facing = "south"
 if(multi.get() == 1): # Si multiplayer est dans les argv (Example : le programme est lancé avec "python main.py multiplayer")
     print("Mode multijoueur enclenché")
     map = cmap.multiMap(Tile,sys.argv,player,pseudo) # gestion différente de la map qui est importée et actualisée depuis le serveur
@@ -125,7 +126,7 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                     if(x>0 and y>0):
                         rx = x//32
                         ry = y//32
-                        if(inventory.tab[rx][ry].name == "storage"):
+                        if(inventory.tab[rx][ry].acceptItem):
                             if(inventory.tab[rx][ry].item == None):
                                 inventory.tab[rx][ry].item = dragged_Item
                                 inventory.tab[rx][ry].count = dragged_Item_count
@@ -155,7 +156,7 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                     ry = y//32
                     drag_x = x-rx*32
                     drag_y = y-ry*32
-                    if(inventory.tab[rx][ry].name == "storage"):
+                    if(inventory.tab[rx][ry].acceptItem):
                         if(inventory.tab[rx][ry].item != None):
                             drag = True
                             dragged_Item = inventory.tab[rx][ry].item
@@ -175,7 +176,7 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                     ry = y//32
                     drag_x = x-rx*32
                     drag_y = y-ry*32
-                    if(inventory.tab[rx][ry].name == "storage"):
+                    if(inventory.tab[rx][ry].acceptItem):
                         if(inventory.tab[rx][ry].item != None and inventory.tab[rx][ry].count>1):
                             drag = True
                             dragged_Item = inventory.tab[rx][ry].item
@@ -204,13 +205,15 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
             print(tot/n*1000) # On affiche le temps moyen pour une frame
         if event.type == pygame.KEYDOWN: # Touche pressée
             if event.key == K_z:
-                yspeed = -1 # Vers la gauche
+                yspeed = -1  # Vers le haut
+                facing = "north"
             if event.key == K_s:
-                yspeed = 1 # vers la droite
+                yspeed = 1 # vers le bas
+                facing = "south"
             if event.key == K_q:
-                xspeed = -1 # Vers le haut
+                xspeed = -1 # Vers la gauche
             if event.key == K_d:
-                xspeed = 1 # vers le bas
+                xspeed = 1 # vers la droite
             if event.key == K_k:
                 noclip = not noclip # On change l'état du noclip vers l'inverse
             if event.key == K_e:
@@ -281,14 +284,24 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
         player.y+=yspeed*speed
         #print(Tile.tiles[map[int((player.x*32+10)//32)][int(floor(player.y))]].doPass,Tile.tiles[surmap[int((player.x*32+10)//32)][int(floor(player.y))]].doPass)
     else:
-        if(xspeed == 1 and Tile.tiles[int(map.gs(int((player.x*32+10)//32),int(floor(player.y)))//1)].doPass and Tile.tiles[int(map.gm(int((player.x*32+10)//32),int(floor(player.y)))//1)].doPass):
-            player.x+=xspeed*speed
-        if(xspeed == -1 and Tile.tiles[int(map.gs(int((player.x*32-10)//32),int(floor(player.y)))//1)].doPass and Tile.tiles[int(map.gm(int((player.x*32-10)//32),int(floor(player.y)))//1)].doPass):
-            player.x+=xspeed*speed
-        if(yspeed == 1 and Tile.tiles[int(map.gs(int(floor(player.x)),int((player.y*32+10)//32))//1)].doPass and Tile.tiles[int(map.gm(int(floor(player.x)),int((player.y*32+10)//32))//1)].doPass):
-            player.y+=yspeed*speed
-        if(yspeed == -1 and Tile.tiles[int(map.gs(int(floor(player.x)),int((player.y*32-10)//32))//1)].doPass and Tile.tiles[int(map.gm(int(floor(player.x)),int((player.y*32-10)//32))//1)].doPass):
-            player.y+=yspeed*speed
+        try:
+            if(xspeed == 1 and (Tile.tiles[int(map.gs(int((player.x*32+10)//32),int(floor(player.y)))//1)].doPass or Tile.tiles[int(map.gs(int((player.x*32+10)//32),int(floor(player.y)))//1)].needToPass in Item.items[Item.nameToNumber[inventory.tab[0][7].item]].effects) and (Tile.tiles[int(map.gm(int((player.x*32+10)//32),int(floor(player.y)))//1)].doPass or Tile.tiles[int(map.gm(int((player.x*32+10)//32),int(floor(player.y)))//1)].needToPass in Item.items[Item.nameToNumber[inventory.tab[0][7].item]].effects)):
+                player.x+=xspeed*speed
+            if(xspeed == -1 and (Tile.tiles[int(map.gs(int((player.x*32-10)//32),int(floor(player.y)))//1)].doPass or Tile.tiles[int(map.gs(int((player.x*32-10)//32),int(floor(player.y)))//1)].needToPass in Item.items[Item.nameToNumber[inventory.tab[0][7].item]].effects) and (Tile.tiles[int(map.gm(int((player.x*32-10)//32),int(floor(player.y)))//1)].doPass or Tile.tiles[int(map.gm(int((player.x*32-10)//32),int(floor(player.y)))//1)].needToPass in Item.items[Item.nameToNumber[inventory.tab[0][7].item]].effects)):
+                player.x+=xspeed*speed
+            if(yspeed == 1 and (Tile.tiles[int(map.gs(int(floor(player.x)),int((player.y*32+10)//32))//1)].doPass or Tile.tiles[int(map.gs(int(floor(player.x)),int((player.y*32+10)//32))//1)].needToPass in Item.items[Item.nameToNumber[inventory.tab[0][7].item]].effects) and (Tile.tiles[int(map.gm(int(floor(player.x)),int((player.y*32+10)//32))//1)].doPass or Tile.tiles[int(map.gm(int(floor(player.x)),int((player.y*32+10)//32))//1)].needToPass in Item.items[Item.nameToNumber[inventory.tab[0][7].item]].effects)):
+                player.y+=yspeed*speed
+            if(yspeed == -1 and (Tile.tiles[int(map.gs(int(floor(player.x)),int((player.y*32-10)//32))//1)].doPass or Tile.tiles[int(map.gs(int(floor(player.x)),int((player.y*32-10)//32))//1)].needToPass in Item.items[Item.nameToNumber[inventory.tab[0][7].item]].effects) and (Tile.tiles[int(map.gm(int(floor(player.x)),int((player.y*32-10)//32))//1)].doPass or Tile.tiles[int(map.gm(int(floor(player.x)),int((player.y*32-10)//32))//1)].needToPass in Item.items[Item.nameToNumber[inventory.tab[0][7].item]].effects)):
+                player.y+=yspeed*speed
+        except:
+            if(xspeed == 1 and Tile.tiles[int(map.gs(int((player.x*32+10)//32),int(floor(player.y)))//1)].doPass and Tile.tiles[int(map.gm(int((player.x*32+10)//32),int(floor(player.y)))//1)].doPass):
+                player.x+=xspeed*speed
+            if(xspeed == -1 and Tile.tiles[int(map.gs(int((player.x*32-10)//32),int(floor(player.y)))//1)].doPass and Tile.tiles[int(map.gm(int((player.x*32-10)//32),int(floor(player.y)))//1)].doPass):
+                player.x+=xspeed*speed
+            if(yspeed == 1 and Tile.tiles[int(map.gs(int(floor(player.x)),int((player.y*32+10)//32))//1)].doPass and Tile.tiles[int(map.gm(int(floor(player.x)),int((player.y*32+10)//32))//1)].doPass):
+                player.y+=yspeed*speed
+            if(yspeed == -1 and Tile.tiles[int(map.gs(int(floor(player.x)),int((player.y*32-10)//32))//1)].doPass and Tile.tiles[int(map.gm(int(floor(player.x)),int((player.y*32-10)//32))//1)].doPass):
+                player.y+=yspeed*speed
     if(editorActivated and editor_click):
         x,y = pygame.mouse.get_pos()
         rx = (x-(options["fen"]["width"]/2)+player.x*32)//32
@@ -357,7 +370,15 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
             x+=32
         x = xmin
         y+=32
-    fen.blit(player.texture,(options["fen"]["width"]/2-16,options["fen"]["height"]/2-16))
+    if(facing == "south"):
+        fen.blit(player.texture,(options["fen"]["width"]/2-16,options["fen"]["height"]/2-16))
+        try:
+            if(Item.items[Item.nameToNumber[inventory.tab[0][7].item]].textureonperso != None):
+                fen.blit(Item.items[Item.nameToNumber[inventory.tab[0][7].item]].textureonperso,(options["fen"]["width"]/2-16,options["fen"]["height"]/2-16))
+        except:
+            pass
+    else:
+        fen.blit(player.back,(options["fen"]["width"]/2-16,options["fen"]["height"]/2-16))
     map.draw_others(fen,player,options)
     fen.blit(filter, (0, 0), special_flags=pygame.BLEND_RGB_SUB)
     for i in range(9):

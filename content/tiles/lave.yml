@@ -3,3 +3,4 @@ fileName : "lave.png"
 doPass : False
 type : "map"
 lightness : 1
+needToPass: "fire_walking"

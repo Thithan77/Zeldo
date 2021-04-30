@@ -1,0 +1,4 @@
+name: "Fire Babouche"
+fileName : "fire_babouches.png"
+effects:
+  - "fire_walking"
