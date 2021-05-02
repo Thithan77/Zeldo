@@ -40,8 +40,8 @@ jobs:
         uses: BaileyJM02/markdown-to-pdf@v1
         with:
           # (Path) The location of the folder containing your .md or .markdown files
-          input_dir: Documents/
+          input_dir: Documents
           # (Path) The location of the folder containing your images, this should be the route of all images
-          images_dir: assets/
+          images_dir: assets
           # (Path) The location of the folder you want to place the built files
-          output_dir: Documents/
+          output_dir: Documents
