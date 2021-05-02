@@ -9,3 +9,4 @@ Le gameplay est divisé en différents "âges" (temporaires):
 - Age de pierre : Le joueur découvre les mines et commence à s'équiper
 - Age de Bronze : Premières ressources plus resistance / Accès à plus de minerais
 - Age de Fer : Ressources les plus résistantes
+L
