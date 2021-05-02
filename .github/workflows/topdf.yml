@@ -27,5 +27,5 @@ jobs:
           build_html: false
       - uses: actions/upload-artifact@v1
         with:
-          name: docs
+          name: 1NSI-B3-LABROUCHE-GUEPIN-WIMART-Projet-MMORPG
           path: Documents
