@@ -10,7 +10,7 @@ Les rôles ne sont pas vraiment définis , chacun peut s’intéresser à plusie
 Utilisation d'une repository Github privée
 - assets : Les fichiers .png qui sont les textures du jeu
 - classes
-  - bordel.py : Fonctions diverses
+  - bordel.py : Fonctions diverses et variées
   - map.py : Gestion de la map
   - player.py : Gestion du personnage
   - Tile.py : Classe Tile
