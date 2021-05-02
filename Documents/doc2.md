@@ -5,7 +5,7 @@ Les rôles ne sont pas vraiment définis , chacun peut s’intéresser à plusie
 - Léo : Mapping
 - Loïc : Graphisme
 - Thibaut : Programmation / son
-
+- Julien (groupe B2) : Graphisme / Code
 ## Espace Numérique de Travail ENT
 Utilisation d'une repository Github privée
 - assets : Les fichiers .png qui sont les textures du jeu
