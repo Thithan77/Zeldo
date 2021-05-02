@@ -212,8 +212,10 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                 facing = "south"
             if event.key == K_q:
                 xspeed = -1 # Vers la gauche
+                facing = "west"
             if event.key == K_d:
                 xspeed = 1 # vers la droite
+                facing = "east"
             if event.key == K_k:
                 noclip = not noclip # On change l'état du noclip vers l'inverse
             if event.key == K_e:
@@ -377,8 +379,12 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                 fen.blit(Item.items[Item.nameToNumber[inventory.tab[0][7].item]].textureonperso,(options["fen"]["width"]/2-16,options["fen"]["height"]/2-16))
         except:
             pass
-    else:
+    elif(facing == "north"):
         fen.blit(player.back,(options["fen"]["width"]/2-16,options["fen"]["height"]/2-16))
+    elif(facing == "east"):
+        fen.blit(player.droite,(options["fen"]["width"]/2-16,options["fen"]["height"]/2-16))
+    else:
+        fen.blit(player.gauche,(options["fen"]["width"]/2-16,options["fen"]["height"]/2-16))
     map.draw_others(fen,player,options)
     fen.blit(filter, (0, 0), special_flags=pygame.BLEND_RGB_SUB)
     for i in range(9):
