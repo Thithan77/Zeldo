@@ -1,4 +1,4 @@
-# NOTE DE CADRAGE Zeldo (MMORPG)
+# NOTE DE CADRAGE Zeldo (MMORPG du turfu)
 
 ## Description de l’équipe et rôle de chacun
 Les rôles ne sont pas vraiment définis , chacun peut s’intéresser à plusieurs parties du projet
