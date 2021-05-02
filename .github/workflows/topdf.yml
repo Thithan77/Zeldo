@@ -19,7 +19,7 @@ jobs:
       - uses: baileyjm02/markdown-to-pdf@v1
         with:
           input_dir: Documents
-          output_dir: Documents
+          output_dir: Documents/pdfs
           images_dir: assets
           # for example <img src="./images/file-name.png">
           image_import: assets
@@ -28,4 +28,10 @@ jobs:
       - uses: actions/upload-artifact@v1
         with:
           name: 1NSI-B3-LABROUCHE-GUEPIN-WIMART-Projet-MMORPG
-          path: Documents
+          path: Documents/pdfs
+      - uses: actions/download-artifact@v2.0.9
+        with:
+          # Artifact name
+          name: 1NSI-B3-LABROUCHE-GUEPIN-WIMART-Projet-MMORPG
+          # Destination path
+          path: Document
