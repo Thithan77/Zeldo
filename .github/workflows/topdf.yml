@@ -35,3 +35,6 @@ jobs:
           name: 1NSI-B3-LABROUCHE-GUEPIN-WIMART-Projet-MMORPG
           # Destination path
           path: Document
+      - uses: TonyBogdanov/zip@1.0
+        with:
+          args: unzip -qq ./Documents/1NSI-B3-LABROUCHE-GUEPIN-WIMART-Projet-MMORPG -d ./Documents/pdfs
