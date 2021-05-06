@@ -37,7 +37,7 @@ del tk
 fen = pygame.display.set_mode((options["fen"]["width"], options["fen"]["height"]),DOUBLEBUF) # On définit la fenêtre à la taille indiquée dans le fichier config
 pygame.display.set_caption("Zeldo")
 if(sys.platform == "linux"):
-    icon = pygame.image.load("assets/Logo.png")
+    icon = pygame.image.load("assets/Logo.png") # le logo du jeu
     light = pygame.image.load("assets/circle.png")
 else:
     icon = pygame.image.load("assets\\Logo.png")
@@ -53,14 +53,14 @@ if("multiplayer" in sys.argv): # Si multiplayer est dans les argv (Example : le 
 else:
     map = cmap.Map(Tile,sys.argv)
 classes.mobs.start(Tile,map)
-import pypresence
-def event_test(a):
+import pypresence # Le module qui gère l'interaction avec Discord
+def event_test(a): # Event quand on clique sur "rejoindre" sur Discord (non utilisé)
     print(f"Yeaaaaaaaah j'ai eu {a} c'est trop cool")
-if(discord.get() == 1):
+if(discord.get() == 1): # Si la case Discord est cochée
     try:
         dPresence = pypresence.Presence("823840156939190292");
         dPresence.connect()
-        if(multi.get() == 1):
+        if(multi.get() == 1): # Si le multijoueur est coché
             dPresence.update(start=time.time(),state="Dans une partie multijoueur",details="Pseudo: {}".format(pseudo.get()),large_image="logo",small_image="perso",party_id="ensah",join="mamamia")
         else:
             dPresence.update(start=time.time(),state="En solo",details="Pseudo: {}".format(pseudo.get()),large_image="logo",small_image="perso")
@@ -97,7 +97,7 @@ break_x = 0 # La position x de cassage
 break_y = 0 # La position y de cassage
 day_tick = 0 # Pour définir le jour et la nuit en comptant les ticks
 going = 1 # à 1 le temps augmente à -1 il diminue
-facing = "south"
+facing = "south" # De quel côté le personnage regarde
 if(multi.get() == 1): # Si multiplayer est dans les argv (Example : le programme est lancé avec "python main.py multiplayer")
     print("Mode multijoueur enclenché")
     map = cmap.multiMap(Tile,sys.argv,player,pseudo) # gestion différente de la map qui est importée et actualisée depuis le serveur
@@ -107,8 +107,8 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
     lastTime = time.time()
     placetick +=1
     day_tick += going
-    if(day_tick == 0 or day_tick == 36000):
-        going = -going
+    if(day_tick == 0 or day_tick == 36000): # Si le temps de la journée atteint 36000 on repart en sens inverse
+        going = -going # going est défini à son inverse
     fen.fill((255,255,255)) # On met un fill blanc tout derrière
     speed = Tile.tiles[int(map.gm(int(player.x),int(player.y))//1)].speed # On récupère la vitesse de la case qui va servir de multiplicateur
     for event in pygame.event.get(): # les évènements
@@ -118,23 +118,23 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
             if(event.button == 1):
                 if(drag): # Drag d'un item dans l'inventaire
                     drag = False
-                    x0 = options["fen"]["width"] - 9*32
+                    x0 = options["fen"]["width"] - 9*32 # On calcule la position en haut à gauche de l'inventaire
                     y0 = options["fen"]["height"] - 9*32
-                    x,y = pygame.mouse.get_pos()
-                    x-=x0
+                    x,y = pygame.mouse.get_pos() # On récupère la position de la souris
+                    x-=x0 # On calcule la position sur le référentiel de l'inventaire (en partant du coin)
                     y-=y0
-                    if(x>0 and y>0):
-                        rx = x//32
+                    if(x>0 and y>0): # Si le clic est sur l'inventaire
+                        rx = x//32 # On regarde sur quelle case est le clic
                         ry = y//32
-                        if(inventory.tab[rx][ry].acceptItem):
-                            if(inventory.tab[rx][ry].item == None):
-                                inventory.tab[rx][ry].item = dragged_Item
+                        if(inventory.tab[rx][ry].acceptItem): # Si on peut rajouter un item sur la case
+                            if(inventory.tab[rx][ry].item == None): # Si il n'y a pas d'item dans la case
+                                inventory.tab[rx][ry].item = dragged_Item # On définit à l'item qui est drag
                                 inventory.tab[rx][ry].count = dragged_Item_count
                                 dragged_Item = None
-                            elif(inventory.tab[rx][ry].item == dragged_Item):
-                                inventory.tab[rx][ry].count+=dragged_Item_count
-                            else:
-                                inventory.tab[drag_coming_x][drag_coming_y].item = dragged_Item
+                            elif(inventory.tab[rx][ry].item == dragged_Item): # Si c'est le même item
+                                inventory.tab[rx][ry].count+=dragged_Item_count # On ajoute le nombre qu'on a drag
+                            else: # Si on ne peut pas rajouter dans la case
+                                inventory.tab[drag_coming_x][drag_coming_y].item = dragged_Item # On renvoit à la case d'origine
                                 inventory.tab[drag_coming_x][drag_coming_y].count = dragged_Item_count
                         else:
                             inventory.tab[drag_coming_x][drag_coming_y].count = dragged_Item_count
@@ -145,7 +145,7 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
         if event.type == pygame.MOUSEBUTTONDOWN:
             if(event.button == 2):
                 editor_click = True # On active le placement auto des tiles
-            if(event.button == 1 and invOpen):
+            if(event.button == 1 and invOpen): # Similaire voir au dessus
                 x0 = options["fen"]["width"] - 9*32
                 y0 = options["fen"]["height"] - 9*32
                 x,y = pygame.mouse.get_pos()
@@ -235,7 +235,7 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                 if(editorActivated):
                     x,y = pygame.mouse.get_pos()
                     rx = (x-(options["fen"]["width"]/2)+player.x*32)//32
-                    ry = (y-(options["fen"]["height"]/2)+player.y*32)//32
+                    ry = (y-(options["fen"]["height"]/2)+player.y*32)//32 # On fait des calculs pour trouver quelle case est cliquée
                     rot = int(map.gm(int(rx),int(ry))%1*10)
                     print(rot+1)
                     if(rot == 3):

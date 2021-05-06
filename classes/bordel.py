@@ -3,7 +3,7 @@ from functools import partial
 try:
     options = json.loads(open("config.json",'r').read()) # On importe le fichier json sous forme d'un objet
 except:
-    print("Erreur dans le chargement du fichier de configuration (existe-t-il ?)")
+    print("Erreur dans le chargement du fichier de configuration (existe-t-il ?)") # Spoiler alert : ça marche pas parce qu'il est déjà ouvert :c
 def editor(ide,tk,tab):
     global id,editorActivated
     tk.destroy()
