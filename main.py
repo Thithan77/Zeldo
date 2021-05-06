@@ -17,6 +17,7 @@ from functools import partial # Une fonction utile mais flemme d'expliquer pourq
 import time
 import classes.inventories as inventories # La classe qui gère les inventaires
 import classes.mobs # Les mobs (c'est géré par Léo je lui fait confiance owo)
+import classes.fight as fight #Le système de combat (c'est géré par Loïc OwO)
 id = [0]
 try:
     options = json.loads(open("config.json",'r').read()) # On importe le fichier json sous forme d'un objet
@@ -220,6 +221,8 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                 noclip = not noclip # On change l'état du noclip vers l'inverse
             if event.key == K_e:
                 invOpen = not invOpen # On ouvre l'inventaire principal en mettant en pause cette fonction
+            if event.key == K_c:
+                fight.main()
             if event.key == K_g: # Sauvegarde de la carte
                 jzon = open("map.json",'w') # On charge le fichier map
                 conversion = [] # Pas utile d'expliquer mais on convertit si les tiles ont changées
