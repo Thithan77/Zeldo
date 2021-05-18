@@ -17,16 +17,18 @@ Groupe Thibaut LABROUCHE - Loïc Guepin - Léo Wimart
 | Elève | Thème du cours préfére / Compétences | Rôle dans le projet |
 | ----- | ------------------------------------ | ------------------- |
 | Thibaut | Algorithmique | CODE |
-| Loïc | Rien | Rien |
-| Léo | Rien | Rien |
-
+| Loïc | Rien* | Rien* |
+| Léo | Rien* | Rien* |
+*En attente de modification par les membres concernés
 ### Communication au sein de l'équipe
 
 Moyen de communication utilisé : Discord
 
 ### Temps prévu/effectif pour la réalisation
 
-| Nombre d'heures de travail pendant les cours | 15h |
-| Nombre d'heures de travail en dehors des cours | Illimitées |
+| Nombre d'heures de travail pendant les cours | Nombre d'heures de travail en dehors des cours |
+| -------------------------------------------- | ---------------------------------------------- |
+| 15h | Illimité |
 
 ## Contenu du Projet
+### Réalisation du projet

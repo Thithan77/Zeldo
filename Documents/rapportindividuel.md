@@ -7,16 +7,26 @@ L'objectif initial était de réaliser un jeu rpg avec une vue de dessus avec si
 ## Mise en place du projet
 
 Tout le code du projet est stocké dans une repository sur github.com : https://github.com/Thithan77/Zeldo (repository privée)
-J'ai choisi le language python en dépis de son manque de performance (voir annexe 1: performance)dans le but de rester dans la continuité du cours de l'année.
-Après quelques recherches et à partir de ce que je connaissais déjà j'ai choisi la librairie pygame pour réaliser la partie graphique du projet.
-Je voulais réaliser le jeu le plus modulable possible avec des outils de dévellopement simples pour pouvoir rajouter des _tiles_ , des _items_ le plus simplement possible et sans toucher au code. Par exemple lorsque j'ai rajouté l'objet des water babouches permettant de marcher sur l'eau il m'a suffit de créer le fichier de configuration `waterbabouche.yml` dans `content/items`:
+J'ai choisi le language python en dépis de son manque de performance (voir annexe 1: performance) dans le but de rester dans la continuité du cours de l'année.
+Après quelques recherches et à partir de ce que je connaissais déjà j'ai choisi la librairie pygame pour réaliser la partie graphique du projet car cela semble être la meilleure solution en python.
+Je voulais réaliser le jeu le plus modulable possible avec des outils de développement simples pour pouvoir rajouter des _tiles_ , des _items_ le plus simplement possible et sans toucher au code. Par exemple lorsque j'ai rajouté l'objet des water babouches permettant de marcher sur l'eau il m'a suffit de créer le fichier de configuration `waterbabouche.yml` dans `content/items`:
 ```yaml
-name: "Water Babouche"
-fileName : "water_babouches.png"
-effects:
-  - "water_walking"
-textureonperso: "baboucheonperso.png"
+name: "Water Babouche" # Le nom de la texture
+fileName : "water_babouches.png" # Le fichier contenant la texture
+effects: # La liste des effets de cet item
+  - "water_walking" # marcher sur l'eau
+textureonperso: "baboucheonperso.png" # le fichier contenant la texture à appliquer au personnage
 ```
+Le jeu est basé sur de la programmation orientée objet
+Pour prendre en exemple le système de _Tile_
+Un objet _Tile_ contient à la fois des variables de classe et des variables d'instance:
+#### Variables de classe
+
+Les variables de classes ont pour objectiver de stocker les variables communes à tout les objets comme le nombre d'objets instanciés qui permet d'attribuer un nouvel id unique à la création d'un nouvel objet. La variable _nameToNumber_ qui est un dictionnaire permet de trouver cet id à partir du nom de l'objet et le tableau _tiles_ permet de faire l'inverse
+
+#### Variables d'instance
+
+Les variables d'instance sont propres à chaque objet _Tile_.
 
 ## Mon rôle dans l'équipe
 
@@ -34,6 +44,19 @@ En recherchant de la documentation sur internet j'ai trouvé une solution intér
 
 ### Annexe 2: Prolongement et futur du projet
 
-Je n'ai pas l'intention d'abandonner le projet dans le futur et je compte continuer de travailler dessus autant que possible dans le futur. 
+Je n'ai pas l'intention d'abandonner le projet dans le futur et je compte continuer de travailler dessus autant que possible dans le futur dans le but de continuer à apprendre l'utilisation de python et de pygame. Si ce n'est pas le cas ce projet pourra toujours servir de base pour un autre dans le futur.
 
 ### Annexe 3: Jouer à Zeldo
+Télécharger les dépendances avec
+```bash
+python -m pip install -r requirements.txt
+```
+ajouter
+```bash
+python -m pip install tkinter
+```
+sur linux car il n'y est pas présent de base
+Puis lancer le jeux
+```bash
+python main.py
+```
