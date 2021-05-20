@@ -222,7 +222,7 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
             if event.key == K_e:
                 invOpen = not invOpen # On ouvre l'inventaire principal en mettant en pause cette fonction
             if event.key == K_c:
-                fight.main()
+                fight.main(fen)
             if event.key == K_g: # Sauvegarde de la carte
                 jzon = open("map.json",'w') # On charge le fichier map
                 conversion = [] # Pas utile d'expliquer mais on convertit si les tiles ont changées
