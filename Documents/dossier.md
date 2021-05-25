@@ -17,7 +17,7 @@ Groupe Thibaut LABROUCHE - Loïc Guepin - Léo Wimart
 | Elève | Thème du cours préfére / Compétences | Rôle dans le projet |
 | ----- | ------------------------------------ | ------------------- |
 | Thibaut | Algorithmique | CODE |
-| Loïc | Rien* | Rien* |
+| Loïc | Python | Sprites + Système de combat |
 | Léo | Rien* | Rien* |
 *En attente de modification par les membres concernés
 ### Communication au sein de l'équipe
