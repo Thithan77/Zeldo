@@ -431,7 +431,11 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
         s = pygame.Surface((32,32)).convert_alpha()
         s.fill((r,0,0,100))
         fen.blit(s,(x,y))
-    classes.mobs.draw_mobs(fen,player,cmap,Tile,options)
+    classes.mobs.draw_vache(fen,player,cmap,Tile,options)
+    classes.mobs.draw_vache(fen,player,cmap,Tile,options)
+    classes.mobs.draw_vache(fen,player,cmap,Tile,options)
+    
+
     img = font.render('VERSION ALPHA - Zeldo + EDITOR - Projet NSI', True, (255,255,255))
     fen.blit(img, (20, 32))
     img = font.render('PosX: {}'.format(player.x), True, (255,255,255))
@@ -459,4 +463,6 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
     tot += (time.time() - lastTime)
     n+= 1
     clock.tick(60)
+
+
 pygame.quit()
