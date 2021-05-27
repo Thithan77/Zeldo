@@ -63,3 +63,5 @@ def it():
     Retourne InventoryTile
     """
     return InventoryTile
+
+
