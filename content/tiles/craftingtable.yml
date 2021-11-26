@@ -1,0 +1,6 @@
+name : "craftingtable"
+fileName : "moai.png"
+doPass : false
+type : "surmap"
+breakable : false
+openinv: "craftingTableInv"

@@ -99,6 +99,7 @@ break_y = 0 # La position y de cassage
 day_tick = 0 # Pour définir le jour et la nuit en comptant les ticks
 going = 1 # à 1 le temps augmente à -1 il diminue
 facing = "south" # De quel côté le personnage regarde
+openinvs = [] # liste des inventaires ouverts
 if(multi.get() == 1): # Si multiplayer est dans les argv (Example : le programme est lancé avec "python main.py multiplayer")
     print("Mode multijoueur enclenché")
     map = cmap.multiMap(Tile,sys.argv,player,pseudo) # gestion différente de la map qui est importée et actualisée depuis le serveur
@@ -187,14 +188,33 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                             drag_coming_x = rx
                             drag_coming_y = ry
             elif(event.button == 1):
-                breaking = True
-                timeBreaking = time.time()
                 x,y= pygame.mouse.get_pos()
                 x,y = pygame.mouse.get_pos()
                 rx = int((x-(options["fen"]["width"]/2)+player.x*32)//32)
                 ry = int((y-(options["fen"]["height"]/2)+player.y*32)//32)
-                break_x = rx
-                break_y = ry
+                if(Tile.tiles[int(map.gs(rx,ry))].openinvtxt == ""):
+                    break_x = rx
+                    break_y = ry
+                    breaking = True
+                    timeBreaking = time.time()
+                else:
+                    print(Tile.tiles[int(map.gs(rx,ry))].openinvtxt)
+                    alreadyopen = False
+                    index = 0
+                    for i in openinvs:
+                        if(i["x"] == rx and i["y"] == ry):
+                            alreadyopen = True
+                            openatindex = index
+                        index+=1
+                    if(not alreadyopen):
+                        newinv = {}
+                        newinv["x"] = rx
+                        newinv["y"] = ry
+                        print(newinv["x"])
+                        newinv["class"] = Tile.tiles[int(map.gs(rx,ry))].openinv(InventoryTile)
+                        openinvs.append(newinv)
+                    else:
+                        del openinvs[openatindex]
             inv = pygame.Rect(options["fen"]["width"]-32*9,options["fen"]["height"]-32,9*32,32)
             if(inv.collidepoint(pygame.mouse.get_pos())):
                 x,y = pygame.mouse.get_pos()
@@ -411,6 +431,12 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
             x = x-drag_x
             y = y-drag_y
             fen.blit(texture,(x,y))
+    for i in openinvs:
+        for k in range(5):
+            for j in range(5):
+                x = (i["x"]+0.5)*32 + k*32 - player.x*32 + options["fen"]["width"]/2
+                y = (i["y"]+0.5)*32 + j*32 - player.y*32 + options["fen"]["height"]/2
+                fen.blit(i["class"].tab[k][j].get_texture(),(x,y))
     if(breaking):
         delta = time.time()-timeBreaking
         r = int(delta/4*255)

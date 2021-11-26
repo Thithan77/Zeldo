@@ -2,6 +2,7 @@
 # Définition de la classe Tile
 import pygame
 import sys
+from classes.inventories import *
 class Tile:
     n = 0 #Indique le nombre d'instances aka le nombre de tiles qu'on a (permet de définir des ids dynamiques sans problème)
     nameToNumber = {} # Un dictionnaire qui associe le nom à l'id
@@ -85,6 +86,11 @@ class Tile:
         else:
             self.breakable = False
             self.drop = None
+        if("openinv" in opt):
+            self.openinvtxt = opt["openinv"];
+            self.openinv = invs[opt["openinv"]]
+        else:
+            self.openinvtxt = ""
     def toString(self): # Renvoie toutes les informations sous forme de texte (pour le débug principalement)
         return("{} , id:{}".format(self.name,self.id))
 

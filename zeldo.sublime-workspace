@@ -1,0 +1,295 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"rende",
+				"m_RendererID"
+			],
+			[
+				"GL_UNS",
+				"GL_UNSIGNED_BYTE"
+			],
+			[
+				"Vertex",
+				"VertexBufferElement"
+			],
+			[
+				"Ui",
+				"Uint32 - Uint32"
+			],
+			[
+				"perso",
+				"persoSurface              - [#SDL_Surface#]persoSurface"
+			],
+			[
+				"SDL_TEXTURACC",
+				"SDL_TEXTUREACCESS_TARGET                 - [#SDL_TextureAccess#]SDL_TEXTUREACCESS_TARGET"
+			],
+			[
+				"SDL8PIXE",
+				"SDL_PIXELFORMAT_RGB888                   - [#SDL_PixelFormatEnum#]SDL_PIXELFORMAT_RGB888"
+			],
+			[
+				"SDL_CreateText",
+				"SDL_CreateTexture                        - [#SDL_Texture *#]SDL_CreateTexture(<#SDL_Renderer *renderer#>, <#Uint32 format#>, <#int access#>, <#int w#>, <#int h#>)"
+			],
+			[
+				"SDL_RENDer_Rect",
+				"SDL_RenderDrawRects              - [#int#]SDL_RenderDrawRects(<#SDL_Renderer *renderer#>, <#const SDL_Rect *rects#>, <#int count#>)"
+			],
+			[
+				"SDL_CreateWindo",
+				"SDL_CreateWindow                         - [#SDL_Window *#]SDL_CreateWindow(<#const char *title#>, <#int x#>, <#int y#>, <#int w#>, <#int h#>, <#Uint32 flags#>)"
+			],
+			[
+				"SDL",
+				"SDL_image"
+			]
+		]
+	},
+	"build_system": "Packages/Python/Python.sublime-build",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"Packages/Python/Python.sublime-build",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					"Syntax Check"
+				]
+			],
+			[
+				"Packages/Python/Python.sublime-build",
+				""
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"Arithmetic"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"packagere",
+				"PackageResourceViewer: Open Resource"
+			],
+			[
+				"package control: in",
+				"Package Control: Install Package"
+			],
+			[
+				"package",
+				"Install Package Control"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/D/Thibaut/Dev/Python/Zeldo/classes/InventoryTile.py",
+		"/D/Thibaut/Dev/Python/Zeldo/zeldo.sublime-project",
+		"/D/Thibaut/Dev/Python/Zeldo/.gitignore",
+		"/Y/MinecraftServers/lobby/server.properties",
+		"/Y/Dev/Node/Georges/main.js",
+		"/Y/MinecraftServers/lobby/start.sh",
+		"/C/Users/thith/Downloads/fr.m3u",
+		"/D/Thibaut/Dev/Python/mmorpg/main.py",
+		"/O/sah des comptes.yml",
+		"/D/Thibaut/Dev/Cpp/UGL/include/ugl.h",
+		"/D/Thibaut/Dev/Cpp/UGL/src/ugl.cpp",
+		"/D/Thibaut/Dev/Cpp/UGL/src/handler.cpp",
+		"/D/Thibaut/Dev/Cpp/UGL/UGL.sublime-project",
+		"/D/Thibaut/Dev/Cpp/protoSDL2/src/texture.cpp",
+		"/D/Thibaut/Dev/Cpp/protoSDL2/src/map.cpp",
+		"/D/Thibaut/Dev/Cpp/Prototype jeu exploration/explo.sublime-project",
+		"/D/Thibaut/Dev/Cpp/UGL/main.cpp",
+		"/D/Thibaut/Dev/Cpp/Prototype jeu exploration/res/map.json",
+		"/D/Thibaut/Dev/Cpp/Prototype jeu exploration/openGL.sublime-project",
+		"/D/Thibaut/Dev/Cpp/Prototype jeu exploration/include/texture.h",
+		"/D/Thibaut/Dev/Cpp/Prototype jeu exploration/res/Interiors_free_32x32.json",
+		"/D/Thibaut/Dev/Cpp/Prototype jeu exploration/src/map.cpp",
+		"/C/Users/thith/Desktop/VroumCoding/src/main.cpp",
+		"/C/Users/thith/AppData/Roaming/Sublime Text/Packages/ClangAutoComplete/ClangAutoComplete.sublime-settings",
+		"/D/Thibaut/Dev/Cpp/Prototype jeu exploration/src/responseObject.cpp",
+		"/D/Thibaut/Dev/Cpp/Prototype jeu exploration/src/main.cpp",
+		"/D/Thibaut/Dev/Cpp/Prototype jeu exploration/src/helpers.cpp",
+		"/C/Users/thith/Desktop/Jeu de qualité sah/src/main.cpp",
+		"/D/Thibaut/Dev/Cpp/Prototype jeu exploration/include/game.h",
+		"/C/Users/thith/AppData/Roaming/Sublime Text/Packages/User/ClangAutoComplete.sublime-settings",
+		"/C/Users/thith/Desktop/test cpp/openGL.sublime-project",
+		"/C/Users/thith/Desktop/bzz bzz GL/include/stb_image.h",
+		"/C/Users/thith/Desktop/bzz bzz GL/src/shader.cpp",
+		"/C/Users/thith/Desktop/bzz bzz GL/include/Renderer.h",
+		"/C/Users/thith/Desktop/bzz bzz GL/include/GL/glew.h",
+		"/C/Users/thith/Desktop/bzz bzz GL/src/VertexBuffer.cpp",
+		"/C/Users/thith/Desktop/bzz bzz GL/src/VertexArray.cpp",
+		"/C/Users/thith/Desktop/bzz bzz GL/src/main.cpp",
+		"/C/Users/thith/Desktop/bzz bzz GL/include/VertexBufferLayout.h",
+		"/C/Users/thith/Desktop/bzz bzz GL/include/VertexBuffer.h",
+		"/C/Users/thith/Desktop/bzz bzz GL/src/IndexBuffer.cpp",
+		"/C/Users/thith/Desktop/bzz bzz GL/include/IndexBuffer.h",
+		"/C/Users/thith/Desktop/bzz bzz GL/src/Renderer.cpp",
+		"/C/Users/thith/Desktop/bzz bzz GL/include/arrayBuffer.h",
+		"/C/Users/thith/Desktop/bzz bzz GL/res/shaders/shader.shader",
+		"/C/Users/thith/Desktop/bzz bzz GL/include/GLFW/glfw3native.h",
+		"/C/Users/thith/Desktop/bzz bzz GL/openGL.sublime-project",
+		"/C/Users/thith/Desktop/Jeu de qualité sah/src/game.cpp",
+		"/C/Users/thith/Desktop/Jeu de qualité sah/include/game.hpp",
+		"/C/Users/thith/Desktop/Jeu de qualité sah/src/game.hpp",
+		"/C/Users/thith/Desktop/Jeu de qualité sah/vroum.sublime-project",
+		"/C/Users/thith/Desktop/Jeu de qualité sah/src/vroum.h",
+		"/C/Users/thith/Desktop/Jeu de qualité sah/src/vroum.cpp",
+		"/C/Users/thith/AppData/Roaming/Sublime Text/Packages/Default/exec.py"
+	],
+	"find":
+	{
+		"height": 40.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"player",
+			"inv",
+			"inventory",
+			"open_inventory",
+			"georges",
+			"amazon",
+			"getTexture",
+			"x",
+			"getTexture",
+			"\t\t\t\n",
+			"renderer",
+			"6",
+			"glGetUniformLocation",
+			"\\n",
+			"\"",
+			"debug_text",
+			"finish"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			""
+		],
+		"reverse": false,
+		"scrollbar_highlights": true,
+		"show_context": true,
+		"use_buffer2": true,
+		"use_gitignore": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"incremental_find":
+	{
+		"height": 28.0
+	},
+	"input":
+	{
+		"height": 41.0
+	},
+	"menu_visible": true,
+	"output.clangautocomplete":
+	{
+		"height": 126.0
+	},
+	"output.exec":
+	{
+		"height": 242.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "Packages/Python/Python.sublime-build",
+	"replace":
+	{
+		"height": 52.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 281.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

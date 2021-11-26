@@ -85,3 +85,8 @@ def open_inventory(fen,inventory,options,player,Tile,map):
         fen.blit(player.texture,(options["fen"]["width"]/2-16,options["fen"]["height"]/2-16))
         map.draw_others(fen,player,options)
         pygame.display.flip()
+
+# Loading other inventories into the game :D
+invs = {}
+from classes.craftingTableInv import *
+invs["craftingTableInv"] = craftingTableInv
