@@ -121,6 +121,8 @@
 	},
 	"file_history":
 	[
+		"/D/Thibaut/Dev/Python/Zeldo/content/inventories/python/storage.py",
+		"/D/Thibaut/Dev/Python/Zeldo/content/inventories/python/storage_babouche.py",
 		"/D/Thibaut/Dev/Python/Zeldo/classes/InventoryTile.py",
 		"/D/Thibaut/Dev/Python/Zeldo/zeldo.sublime-project",
 		"/D/Thibaut/Dev/Python/Zeldo/.gitignore",
@@ -192,6 +194,9 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"openinvs",
+			"noise",
+			"perlin",
 			"player",
 			"inv",
 			"inventory",

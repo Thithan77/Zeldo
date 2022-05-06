@@ -488,7 +488,7 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
     #os.system("pause")
     tot += (time.time() - lastTime)
     n+= 1
-    clock.tick(60)
+    clock.tick(75)
 
 
 pygame.quit()
