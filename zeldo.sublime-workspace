@@ -4,6 +4,18 @@
 		"selected_items":
 		[
 			[
+				"dragged",
+				"dragged_Item_count"
+			],
+			[
+				"draged",
+				"dragged_Item_count"
+			],
+			[
+				"dragg",
+				"dragged_Item_count"
+			],
+			[
 				"rende",
 				"m_RendererID"
 			],
@@ -121,6 +133,8 @@
 	},
 	"file_history":
 	[
+		"/D/Thibaut/Dev/Python/Zeldo/content/items/banana.yml",
+		"/D/Thibaut/Dev/Python/Zeldo/classes/Item.py",
 		"/D/Thibaut/Dev/Python/Zeldo/content/inventories/python/storage.py",
 		"/D/Thibaut/Dev/Python/Zeldo/content/inventories/python/storage_babouche.py",
 		"/D/Thibaut/Dev/Python/Zeldo/classes/InventoryTile.py",
@@ -180,7 +194,7 @@
 	],
 	"find":
 	{
-		"height": 40.0
+		"height": 41.0
 	},
 	"find_in_files":
 	{
@@ -194,6 +208,22 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"uwu",
+			"UwU",
+			"surmodify",
+			"map.gm",
+			"setmap",
+			"map.ss",
+			"map.gs",
+			"inventory",
+			"inv",
+			"break_x",
+			"breaking",
+			"mine",
+			"mining",
+			"print(f\"oe ça tombe dans l'inventaire case {k};{j}\")",
+			"openinvs",
+			"dragged_Item",
 			"openinvs",
 			"noise",
 			"perlin",
@@ -233,7 +263,7 @@
 	},
 	"incremental_find":
 	{
-		"height": 28.0
+		"height": 29.0
 	},
 	"input":
 	{
@@ -255,7 +285,7 @@
 	"pinned_build_system": "Packages/Python/Python.sublime-build",
 	"replace":
 	{
-		"height": 52.0
+		"height": 54.0
 	},
 	"save_all_on_build": true,
 	"select_file":

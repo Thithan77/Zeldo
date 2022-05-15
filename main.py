@@ -30,7 +30,7 @@ tkinter.Label(tk,text="Zeldo Launcher").pack()
 pseudo = tkinter.StringVar()
 tkinter.Entry(tk,textvariable=pseudo).pack()
 multi = tkinter.IntVar()
-tkinter.Checkbutton(tk, text='Multiplayer',variable=multi).pack()
+tkinter.Checkbutton(tk, text='Multiplayer',variable=multi)#.pack()
 discord = tkinter.IntVar()
 tkinter.Checkbutton(tk, text='Discord Rich Presence',variable=discord).pack()
 tk.mainloop()
@@ -118,6 +118,11 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
             if(event.button == 2): # Si c'est un clic molette
                 editor_click = False # On désactive la placement auto des tiles
             if(event.button == 1):
+                if(breaking):
+                    breaking = False
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if(event.button == 1):
+                dropped_this_tick = False
                 if(drag): # Drag d'un item dans l'inventaire
                     drag = False
                     x0 = options["fen"]["width"] - 9*32 # On calcule la position en haut à gauche de l'inventaire
@@ -138,35 +143,99 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                             else: # Si on ne peut pas rajouter dans la case
                                 inventory.tab[drag_coming_x][drag_coming_y].item = dragged_Item # On renvoit à la case d'origine
                                 inventory.tab[drag_coming_x][drag_coming_y].count = dragged_Item_count
+                                dragged_Item = None
                         else:
+                            inventory.tab[drag_coming_x][drag_coming_y].item = dragged_Item # On renvoit à la case d'origine
                             inventory.tab[drag_coming_x][drag_coming_y].count = dragged_Item_count
+                            dragged_Item = None
                     else:
-                        inventory.tab[drag_coming_x][drag_coming_y].count = dragged_Item_count
-                if(breaking):
-                    breaking = False
-        if event.type == pygame.MOUSEBUTTONDOWN:
+                        # Ici on va check si l'item peut pas être rajouté dans un des inventaires ouverts sur la map
+                        x,y = pygame.mouse.get_pos() # On récupère la position de la souris
+                        for i in openinvs:
+                            for k in range(5):
+                                for j in range(5):
+                                    Xitem = (i["x"]+0.5)*32 + k*32 - player.x*32 + options["fen"]["width"]/2
+                                    Yitem = (i["y"]+0.5)*32 + j*32 - player.y*32 + options["fen"]["height"]/2
+                                    if(x >= Xitem and x <= Xitem + 32 and y >= Yitem and y <= Yitem + 32):
+                                        print(f"oe ça tombe dans l'inventaire case {k};{j}")
+                                        dropped_this_tick = True;
+                                        if(i["class"].tab[k][j].acceptItem):
+                                            if(i["class"].tab[k][j].item == None): # Si il n'y a pas d'item dans la case
+                                                i["class"].tab[k][j].item = dragged_Item # On définit à l'item qui est drag
+                                                i["class"].tab[k][j].count = dragged_Item_count
+                                                dragged_Item = None
+                                                dragged_Item_count = 0
+                                            elif(i["class"].tab[k][j].item == dragged_Item): # Si c'est le même item
+                                                i["class"].tab[k][j].count+=dragged_Item_count # On ajoute le nombre qu'on a drag
+                                                dragged_Item = None
+                                                dragged_Item_count = 0
+                                            else: # Si on ne peut pas rajouter dans la case
+                                                inventory.tab[drag_coming_x][drag_coming_y].item = dragged_Item # On renvoit à la case d'origine
+                                                inventory.tab[drag_coming_x][drag_coming_y].count = dragged_Item_count
+                                                dragged_Item = None
+                                                dragged_Item_count = 0
+                        if(not dropped_this_tick):
+                            x,y = pygame.mouse.get_pos()
+                            rx = int((x-(options["fen"]["width"]/2)+player.x*32)//32)
+                            ry = int((y-(options["fen"]["height"]/2)+player.y*32)//32)
+                            blockapose = Item.items[Item.nameToNumber[dragged_Item]].blockpose
+                            if(blockapose != ""):
+                                if(Tile.tiles[Tile.nameToNumber[blockapose]].type == "surmap" and Tile.tiles[int(map.gs(rx,ry))].name == "nada"):
+                                    map.surmodify(rx,ry,Tile.nameToNumber[blockapose])
+                                    if(dragged_Item_count == 1):
+                                        dragged_Item_count = 0
+                                        dragged_Item = None
+                                    else:
+                                        dragged_Item_count-=1
+                                        drag = True
+                            else:
+                                inventory.tab[drag_coming_x][drag_coming_y].item = dragged_Item # On renvoit à la case d'origine
+                                inventory.tab[drag_coming_x][drag_coming_y].count = dragged_Item_count
+                                dragged_Item = None
+                elif(invOpen):
+                    x0 = options["fen"]["width"] - 9*32
+                    y0 = options["fen"]["height"] - 9*32
+                    x,y = pygame.mouse.get_pos()
+                    x-=x0
+                    y-=y0
+                    if(x>0 and y>0):
+                        rx = x//32
+                        ry = y//32
+                        drag_x = x-rx*32
+                        drag_y = y-ry*32
+                        if(inventory.tab[rx][ry].acceptItem):
+                            if(inventory.tab[rx][ry].item != None):
+                                drag = True
+                                dragged_Item = inventory.tab[rx][ry].item
+                                dragged_Item_count = inventory.tab[rx][ry].count
+                                inventory.tab[rx][ry].item = None
+                                inventory.tab[rx][ry].count = 0
+                                drag_coming_x = rx
+                                drag_coming_y = ry
+                x,y = pygame.mouse.get_pos()
+                if(not dropped_this_tick):
+                    for i in openinvs:
+                            for k in range(5):
+                                for j in range(5):
+                                    Xitem = (i["x"]+0.5)*32 + k*32 - player.x*32 + options["fen"]["width"]/2
+                                    Yitem = (i["y"]+0.5)*32 + j*32 - player.y*32 + options["fen"]["height"]/2
+                                    if(x >= Xitem and x <= Xitem + 32 and y >= Yitem and y <= Yitem + 32):
+                                        print(f"oe ça tombe dans l'inventaire case {k};{j}")
+                                        if(i["class"].tab[k][j].acceptItem):
+                                            drag_x = x-Xitem
+                                            drag_y = y-Yitem
+                                            if(i["class"].tab[k][j].item != None):
+                                                drag = True
+                                                dragged_Item = i["class"].tab[k][j].item
+                                                dragged_Item_count = i["class"].tab[k][j].count
+                                                i["class"].tab[k][j].item = None
+                                                i["class"].tab[k][j].count = 0
+                                                drag_coming_x = 0 # CORRIGER CA SVP
+                                                drag_coming_y = 0
             if(event.button == 2):
                 editor_click = True # On active le placement auto des tiles
             if(event.button == 1 and invOpen): # Similaire voir au dessus
-                x0 = options["fen"]["width"] - 9*32
-                y0 = options["fen"]["height"] - 9*32
-                x,y = pygame.mouse.get_pos()
-                x-=x0
-                y-=y0
-                if(x>0 and y>0):
-                    rx = x//32
-                    ry = y//32
-                    drag_x = x-rx*32
-                    drag_y = y-ry*32
-                    if(inventory.tab[rx][ry].acceptItem):
-                        if(inventory.tab[rx][ry].item != None):
-                            drag = True
-                            dragged_Item = inventory.tab[rx][ry].item
-                            dragged_Item_count = inventory.tab[rx][ry].count
-                            inventory.tab[rx][ry].item = None
-                            inventory.tab[rx][ry].count = 0
-                            drag_coming_x = rx
-                            drag_coming_y = ry
+                pass
             elif(event.button == 3 and invOpen):
                 x0 = options["fen"]["width"] - 9*32
                 y0 = options["fen"]["height"] - 9*32
@@ -189,7 +258,6 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                             drag_coming_y = ry
             elif(event.button == 1):
                 x,y= pygame.mouse.get_pos()
-                x,y = pygame.mouse.get_pos()
                 rx = int((x-(options["fen"]["width"]/2)+player.x*32)//32)
                 ry = int((y-(options["fen"]["height"]/2)+player.y*32)//32)
                 if(Tile.tiles[int(map.gs(rx,ry))].openinvtxt == ""):
@@ -425,18 +493,34 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                 x = options["fen"]["width"] - 9*32 + xl
                 y = options["fen"]["height"] - 9*32 + yl
                 fen.blit(inventory.tab[i][j].get_texture(),(x,y))
-        if(drag):
-            texture = Item.items[Item.nameToNumber[dragged_Item]].texture
-            x,y = pygame.mouse.get_pos()
-            x = x-drag_x
-            y = y-drag_y
-            fen.blit(texture,(x,y))
+        
     for i in openinvs:
         for k in range(5):
             for j in range(5):
                 x = (i["x"]+0.5)*32 + k*32 - player.x*32 + options["fen"]["width"]/2
                 y = (i["y"]+0.5)*32 + j*32 - player.y*32 + options["fen"]["height"]/2
                 fen.blit(i["class"].tab[k][j].get_texture(),(x,y))
+    if(drag):
+        texture = Item.items[Item.nameToNumber[dragged_Item]].texture
+        x,y = pygame.mouse.get_pos()
+        x = x-drag_x
+        y = y-drag_y
+        fen.blit(texture,(x,y))
+        x,y = pygame.mouse.get_pos()
+        rx = int((x-(options["fen"]["width"]/2)+player.x*32)//32)
+        ry = int((y-(options["fen"]["height"]/2)+player.y*32)//32)
+        x = rx*32-player.x*32+options["fen"]["width"]/2
+        y = ry*32-player.y*32+options["fen"]["height"]/2
+        x0 = options["fen"]["width"] - 9*32 # On calcule la position en haut à gauche de l'inventaire
+        y0 = options["fen"]["height"] - 9*32
+        xm,ym = pygame.mouse.get_pos()
+        xm-=x0 # On calcule la position sur le référentiel de l'inventaire (en partant du coin)
+        ym-=y0
+        pose = Item.items[Item.nameToNumber[dragged_Item]].blockpose
+        if((pose != "") and (not(xm > 0 and ym > 0) or not invOpen)):
+
+            s = Tile.tiles[Tile.nameToNumber[pose]].texture
+            fen.blit(s,(x,y))
     if(breaking):
         delta = time.time()-timeBreaking
         r = int(delta/4*255)
@@ -473,6 +557,10 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
     fen.blit(img, (20, 128))
     img = font.render('Server: {}'.format(map.getServer()), True, (255,255,255))
     fen.blit(img, (20, 160))
+    img = font.render('Dragged Item: {}'.format(dragged_Item), True, (255,255,255))
+    fen.blit(img, (20, 224))
+    img = font.render('Dragged Item Number: {}'.format(dragged_Item_count), True, (255,255,255))
+    fen.blit(img, (20, 256))
     if(going < 0):
         hour = (36000-day_tick)//3000
         temp = (36000-day_tick)-(hour*3000)

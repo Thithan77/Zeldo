@@ -41,5 +41,9 @@ class Item:
             self.textureonperso.set_colorkey((255,255,255))
         else:
             self.textureonperso = None
+        if("blockpose" in opt):
+            self.blockpose = opt["blockpose"]
+        else:
+            self.blockpose = ""
     def toString(self): # Renvoie toutes les informations sous forme de texte (pour le débug principalement)
         return("{} , id:{}".format(self.name,self.id))
