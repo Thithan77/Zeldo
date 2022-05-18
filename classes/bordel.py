@@ -1,9 +1,9 @@
 import tkinter
 from functools import partial
-try:
-    options = json.loads(open("config.json",'r').read()) # On importe le fichier json sous forme d'un objet
-except:
-    print("Erreur dans le chargement du fichier de configuration (existe-t-il ?)") # Spoiler alert : ça marche pas parce qu'il est déjà ouvert :c
+def varToBordel(optionsO,playerO):
+    global options,player
+    options = optionsO
+    player = playerO
 def editor(ide,tk,tab):
     global id,editorActivated
     tk.destroy()
@@ -36,12 +36,12 @@ def past(tk,page,tiles,id):
         tkinter.Button(tk,text="Page suivante",command=partial(next,tk,page,tiles,id)).pack()
         tkinter.Button(tk,text="Page précédente",command=partial(past,tk,page,tiles,id)).pack()
         tk.mainloop()
-def globalToLocalCoord(x,y,playerx,playery,options):
+def globalToLocalCoord(x,y):
     """
     Convertisseur de coordonnées sur la carte à des coordonnées sur l'écran à partir du coin en haut à gauche
     """
-    rx = (x+(options["fen"]["width"]/2)-playerx*32)
-    ry = (y+(options["fen"]["height"]/2)-playery*32)
+    rx = (x+(options["fen"]["width"]/2)-player.x*32)
+    ry = (y+(options["fen"]["height"]/2)-player.y*32)
     return rx,ry
 def join(tk,game,map):
     """

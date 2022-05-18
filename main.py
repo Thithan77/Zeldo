@@ -29,6 +29,8 @@ tk = tkinter.Tk() # On créé la fenêtre tkinter
 tkinter.Label(tk,text="Zeldo Launcher").pack()
 pseudo = tkinter.StringVar()
 tkinter.Entry(tk,textvariable=pseudo).pack()
+mapNom = tkinter.StringVar()
+tkinter.Entry(tk,textvariable=mapNom).pack()
 multi = tkinter.IntVar()
 tkinter.Checkbutton(tk, text='Multiplayer',variable=multi)#.pack()
 discord = tkinter.IntVar()
@@ -100,11 +102,12 @@ day_tick = 0 # Pour définir le jour et la nuit en comptant les ticks
 going = 1 # à 1 le temps augmente à -1 il diminue
 facing = "south" # De quel côté le personnage regarde
 openinvs = [] # liste des inventaires ouverts
+varToBordel(options,player)
 if(multi.get() == 1): # Si multiplayer est dans les argv (Example : le programme est lancé avec "python main.py multiplayer")
     print("Mode multijoueur enclenché")
     map = cmap.multiMap(Tile,sys.argv,player,pseudo) # gestion différente de la map qui est importée et actualisée depuis le serveur
 else:
-    map = cmap.Map(Tile,sys.argv)
+    map = cmap.NewMap(Tile,sys.argv,mapNom.get())
 while playing: # tant que le joueur joue on continue la boucle du jeu
     lastTime = time.time()
     placetick +=1
@@ -188,10 +191,16 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                                     else:
                                         dragged_Item_count-=1
                                         drag = True
+                                else:
+                                    inventory.tab[drag_coming_x][drag_coming_y].item = dragged_Item # On renvoit à la case d'origine
+                                    inventory.tab[drag_coming_x][drag_coming_y].count = dragged_Item_count
+                                    dragged_Item = None
+                                    dragged_Item_count = 0
                             else:
                                 inventory.tab[drag_coming_x][drag_coming_y].item = dragged_Item # On renvoit à la case d'origine
                                 inventory.tab[drag_coming_x][drag_coming_y].count = dragged_Item_count
                                 dragged_Item = None
+                                dragged_Item_count = 0
                 elif(invOpen):
                     x0 = options["fen"]["width"] - 9*32
                     y0 = options["fen"]["height"] - 9*32
@@ -416,7 +425,7 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
         yc = y%32
         for j in range(lin):
             xc = x%32
-            if(floor(x/32) <= 0 or floor(y/32) <= 0 or floor(x/32) >= 200 or floor(y/32) >= 200):
+            if(False):
                 fen.blit(Tile.tiles[Tile.nameToNumber["darkeau"]].texture,(j*32-xc,i*32-yc))
             else:
                 yz = floor(y/32)
@@ -561,6 +570,8 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
     fen.blit(img, (20, 224))
     img = font.render('Dragged Item Number: {}'.format(dragged_Item_count), True, (255,255,255))
     fen.blit(img, (20, 256))
+    img = font.render('No clip: {}'.format(noclip), True, (255,255,255))
+    fen.blit(img, (20, 256+32))
     if(going < 0):
         hour = (36000-day_tick)//3000
         temp = (36000-day_tick)-(hour*3000)

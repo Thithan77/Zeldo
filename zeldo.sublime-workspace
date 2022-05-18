@@ -4,6 +4,26 @@
 		"selected_items":
 		[
 			[
+				"chun",
+				"chunkY"
+			],
+			[
+				"ch",
+				"chunkY"
+			],
+			[
+				"chu",
+				"chunkY"
+			],
+			[
+				"load",
+				"loadingChunks"
+			],
+			[
+				"c",
+				"chunkY"
+			],
+			[
 				"dragged",
 				"dragged_Item_count"
 			],
@@ -133,6 +153,7 @@
 	},
 	"file_history":
 	[
+		"/D/Thibaut/Dev/Python/Zeldo/maps/owo/chunks/0;0.json",
 		"/D/Thibaut/Dev/Python/Zeldo/content/items/banana.yml",
 		"/D/Thibaut/Dev/Python/Zeldo/classes/Item.py",
 		"/D/Thibaut/Dev/Python/Zeldo/content/inventories/python/storage.py",
@@ -194,7 +215,7 @@
 	],
 	"find":
 	{
-		"height": 41.0
+		"height": 44.0
 	},
 	"find_in_files":
 	{
@@ -208,6 +229,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"pseudo",
 			"uwu",
 			"UwU",
 			"surmodify",
@@ -263,7 +285,7 @@
 	},
 	"incremental_find":
 	{
-		"height": 29.0
+		"height": 32.0
 	},
 	"input":
 	{
@@ -285,7 +307,7 @@
 	"pinned_build_system": "Packages/Python/Python.sublime-build",
 	"replace":
 	{
-		"height": 54.0
+		"height": 60.0
 	},
 	"save_all_on_build": true,
 	"select_file":

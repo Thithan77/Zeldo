@@ -4,6 +4,7 @@ from _thread import *
 import time
 import copy
 import pygame
+import os
 from perlin_noise import PerlinNoise
 noise = PerlinNoise(octaves=0.1, seed=648325)
 others = []
@@ -150,3 +151,89 @@ class multiMap:
             fen.blit(img, (rx, ry-8))
     def getServer(self):
         return multiMap.serverName
+chunkSize = 32
+class NewMap:
+    Map = {}
+    loadedChunks = []
+    loadingChunks = []
+    nomMap = ""
+    def __init__(self,Tile,argv,nomMap):
+        self.map = []
+        self.surmap = []
+        self.Tile = Tile
+        maps = os.listdir("maps/")
+        if(nomMap not in maps):
+            os.mkdir(f"maps/{nomMap}")
+            os.mkdir(f"maps/{nomMap}/chunks")
+        NewMap.nomMap = nomMap
+        
+    def getServer(self):
+        return f"local+{NewMap.nomMap}"
+    def gm(self,i,j):
+        chunkX = i//chunkSize
+        chunkY = j//chunkSize
+        if((chunkX,chunkY) not in NewMap.loadedChunks):
+            if((chunkX,chunkY) not in NewMap.loadingChunks):
+                start_new_thread(loadChunk,(chunkX,chunkY))
+                NewMap.loadingChunks.append((chunkX,chunkY))
+            return 21
+        else:
+            c = NewMap.Map[(chunkX,chunkY)]["tiles"]["map"][i%chunkSize][j%chunkSize]
+            return self.Tile.nameToNumber[c]
+    def gs(self,i,j):
+        chunkX = i//chunkSize
+        chunkY = j//chunkSize
+        if((chunkX,chunkY) not in NewMap.loadedChunks):
+            if((chunkX,chunkY) not in NewMap.loadingChunks):
+                start_new_thread(loadChunk,(chunkX,chunkY))
+                NewMap.loadingChunks.append((chunkX,chunkY))
+            return 12
+        else:
+            c = NewMap.Map[(chunkX,chunkY)]["tiles"]["surmap"][i%chunkSize][j%chunkSize]
+            return self.Tile.nameToNumber[c]
+    def modify(self,i,j,val):
+        NewMap.Map[(i//chunkSize,j//chunkSize)]["tiles"]["map"][i%chunkSize][j%chunkSize] = self.Tile.tiles[val].name
+    def surmodify(self,i,j,val):
+        NewMap.Map[(i//chunkSize,j//chunkSize)]["tiles"]["surmap"][i%chunkSize][j%chunkSize] = self.Tile.tiles[val].name
+    def draw_others(self,fen,player,options):
+        pass
+def loadChunk(x,y):
+    chunks = os.listdir(f"maps/{NewMap.nomMap}/chunks")
+    if(f"{x};{y}.json" in chunks):
+        f = open(f"maps/{NewMap.nomMap}/chunks/{x};{y}.json",'r')
+        txt = f.read()
+        unjsoned = json.loads(txt)
+        NewMap.Map[(x,y)] = unjsoned
+        NewMap.loadedChunks.append((x,y))
+        NewMap.loadingChunks.remove((x,y))
+        f.close()
+    else:
+        f = open(f"maps/{NewMap.nomMap}/chunks/{x};{y}.json",'a')
+        owo = {}
+        lines = []
+        noise = PerlinNoise(octaves=0.1, seed=abs(int(hash(NewMap.nomMap))))
+        for i in range(chunkSize):
+            lines.append("")
+        owo["tiles"] = {}
+        owo["tiles"]["map"] = []
+        for i in range(chunkSize):
+            owo["tiles"]["map"].append(copy.copy(lines))
+        for i in range(chunkSize):
+            for j in range(chunkSize):
+                k = noise([(x*32+i)/2048,(y*32+j)/2048])
+                if(k <= 0.0):
+                    owo["tiles"]["map"][i][j] = "gazon"
+                else:
+                    owo["tiles"]["map"][i][j] = "eau"
+        lines = []
+        owo["tiles"]["surmap"] = []
+        for i in range(chunkSize):
+            lines.append("nada")
+        for i in range(chunkSize):
+            owo["tiles"]["surmap"].append(copy.copy(lines))
+        jsoned = json.dumps(owo)
+        NewMap.Map[(x,y)] = owo
+        NewMap.loadedChunks.append((x,y))
+        NewMap.loadingChunks.remove((x,y))
+        f.write(jsoned)
+        f.close()
