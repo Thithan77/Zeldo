@@ -4,6 +4,26 @@
 		"selected_items":
 		[
 			[
+				"max",
+				"maxrotID"
+			],
+			[
+				"FPS",
+				"maxFPSInt"
+			],
+			[
+				"las",
+				"lastWalk"
+			],
+			[
+				"fram",
+				"framesTimes"
+			],
+			[
+				"perf",
+				"perfReport"
+			],
+			[
 				"chun",
 				"chunkY"
 			],
@@ -153,14 +173,21 @@
 	},
 	"file_history":
 	[
+		"/D/Thibaut/Dev/Python/Zeldo/classes/player.py",
+		"/D/Thibaut/Dev/Python/Zeldo/classes/map.py",
+		"/D/Thibaut/Dev/Python/Zeldo/classes/InventoryTile.py",
+		"/D/Thibaut/Dev/Python/Zeldo/server/server.py",
+		"/D/Thibaut/Dev/Python/Zeldo/maps/16chunck/chunks/0;-12.json",
+		"/D/Thibaut/Dev/Python/Zeldo/main.py",
+		"/D/Thibaut/Dev/Python/Zeldo/classes/bordel.py",
+		"/D/Thibaut/Dev/Python/Zeldo/.gitignore",
+		"/D/Thibaut/Dev/Python/Zeldo/init.py",
 		"/D/Thibaut/Dev/Python/Zeldo/maps/owo/chunks/0;0.json",
 		"/D/Thibaut/Dev/Python/Zeldo/content/items/banana.yml",
 		"/D/Thibaut/Dev/Python/Zeldo/classes/Item.py",
 		"/D/Thibaut/Dev/Python/Zeldo/content/inventories/python/storage.py",
 		"/D/Thibaut/Dev/Python/Zeldo/content/inventories/python/storage_babouche.py",
-		"/D/Thibaut/Dev/Python/Zeldo/classes/InventoryTile.py",
 		"/D/Thibaut/Dev/Python/Zeldo/zeldo.sublime-project",
-		"/D/Thibaut/Dev/Python/Zeldo/.gitignore",
 		"/Y/MinecraftServers/lobby/server.properties",
 		"/Y/Dev/Node/Georges/main.js",
 		"/Y/MinecraftServers/lobby/start.sh",
@@ -215,7 +242,7 @@
 	],
 	"find":
 	{
-		"height": 44.0
+		"height": 41.0
 	},
 	"find_in_files":
 	{
@@ -229,6 +256,24 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"print",
+			"id",
+			"editor_click",
+			"Map",
+			"map.json",
+			"inv",
+			"zoom",
+			"light",
+			"lights",
+			"scr",
+			"screen",
+			"fen",
+			"pygame.Draw",
+			"draw_vache",
+			"(x+(options[\"fen\"][\"width\"]/2)-player.x*32)",
+			"player",
+			"options",
+			"globalToLocalCoord",
 			"pseudo",
 			"uwu",
 			"UwU",

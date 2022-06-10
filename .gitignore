@@ -5,3 +5,5 @@ build
 zeldo.sublime-project
 dist
 maps
+main.spec
+map.json

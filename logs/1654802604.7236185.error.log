@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "D:\Thibaut\Dev\Python\Zeldo\main.py", line 388, in <module>
+    map.modify(int(rx),int(ry),map.gm(int(rx),int(ry)) + 0.1)
+  File "D:\Thibaut\Dev\Python\Zeldo\classes\map.py", line 196, in modify
+    NewMap.Map[(i//chunkSize,j//chunkSize)]["tiles"]["map"][i%chunkSize][j%chunkSize] = self.Tile.tiles[val].name
+TypeError: list indices must be integers or slices, not float

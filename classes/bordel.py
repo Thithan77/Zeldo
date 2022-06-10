@@ -1,4 +1,5 @@
 import tkinter
+import time
 from functools import partial
 def varToBordel(optionsO,playerO):
     global options,player
@@ -51,3 +52,26 @@ def join(tk,game,map):
         map.updates.append(("changeMap",game))
     elif(game.get() != ""):
         map.updates.append(("changeMap",game.get()))
+perfs = {}
+lastTime = {}
+def perfReport(name):
+    global perfs,lastTime
+    lastTime[name] = time.time()
+def perfReportEnd(name):
+    global perfs,lastTime
+    if(name in perfs):
+        perfs[name].append(time.time()-lastTime[name])
+    else:
+        perfs[name] = []
+        perfs[name].append(time.time()-lastTime[name])
+def printReports():
+    print("Performance Report")
+    for key in perfs:
+        s = 0
+        value = perfs[key]
+        for i in value:
+            s += i
+        m = s/len(value)
+        print(f"{key}:{m*1000}ms")
+def getReport(name):
+    return perfs[name]

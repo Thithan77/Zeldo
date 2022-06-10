@@ -1,0 +1,97 @@
+{
+ "version": "auto-py-to-exe-configuration_v1",
+ "pyinstallerOptions": [
+  {
+   "optionDest": "noconfirm",
+   "value": true
+  },
+  {
+   "optionDest": "filenames",
+   "value": "D:/Thibaut/Dev/Python/Zeldo/main.py"
+  },
+  {
+   "optionDest": "onefile",
+   "value": false
+  },
+  {
+   "optionDest": "console",
+   "value": false
+  },
+  {
+   "optionDest": "icon_file",
+   "value": "D:/Thibaut/Dev/Python/Zeldo/logo.ico"
+  },
+  {
+   "optionDest": "name",
+   "value": "Zeldo"
+  },
+  {
+   "optionDest": "ascii",
+   "value": false
+  },
+  {
+   "optionDest": "clean_build",
+   "value": false
+  },
+  {
+   "optionDest": "strip",
+   "value": false
+  },
+  {
+   "optionDest": "noupx",
+   "value": false
+  },
+  {
+   "optionDest": "disable_windowed_traceback",
+   "value": false
+  },
+  {
+   "optionDest": "embed_manifest",
+   "value": true
+  },
+  {
+   "optionDest": "uac_admin",
+   "value": false
+  },
+  {
+   "optionDest": "uac_uiaccess",
+   "value": false
+  },
+  {
+   "optionDest": "win_private_assemblies",
+   "value": false
+  },
+  {
+   "optionDest": "win_no_prefer_redirects",
+   "value": false
+  },
+  {
+   "optionDest": "bootloader_ignore_signals",
+   "value": false
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Thibaut/Dev/Python/Zeldo/assets;assets/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Thibaut/Dev/Python/Zeldo/content;content/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Thibaut/Dev/Python/Zeldo/maps;maps/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Thibaut/Dev/Python/Zeldo/config.json;."
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Thibaut/Dev/Python/Zeldo/logo.ico;."
+  }
+ ],
+ "nonPyinstallerOptions": {
+  "increaseRecursionLimit": true,
+  "manualArguments": ""
+ }
+}

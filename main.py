@@ -1,11 +1,19 @@
 #coding:utf-8
 # In memorian Mr Ramaholiarison
+import sys # Import de sys
+import time
+"""
+logFile = open(f"logs/{time.time()}.log","a")
+sys.stdout = logFile
+logFileError = open(f"logs/{time.time()}.error.log","a")
+sys.stderr = logFileError
+"""
 import pygame # import de pygame
 import tkinter # import de tkinter
 from pygame.locals import * # import des constantes de Pygame comme QUIT
 from classes.bordel import * # On importe la libairie perso bordel (ya des trucs bordels dedans)
+perfReport("preLaunchergameLoading")
 import os # Plein de fonctions sytèmes utiles (geta)
-import sys # Import de sys
 import socket # Socket pour le jeu en ligne
 pygame.init() # Initialisation de pygame
 #pygame.key.set_repeat(10, 16) # set_repeat(délais avant de repêter une touche,délais entre chaque répétition)
@@ -14,7 +22,7 @@ from math import *
 import classes.player as pl# On importe la classe qui gère le joueur
 import classes.map as cmap # La classe qui gère la map
 from functools import partial # Une fonction utile mais flemme d'expliquer pourquoi
-import time
+
 import classes.inventories as inventories # La classe qui gère les inventaires
 import classes.mobs # Les mobs (c'est géré par Léo je lui fait confiance owo)
 import classes.fight as fight #Le système de combat (c'est géré par Loïc OwO)
@@ -35,9 +43,11 @@ multi = tkinter.IntVar()
 tkinter.Checkbutton(tk, text='Multiplayer',variable=multi)#.pack()
 discord = tkinter.IntVar()
 tkinter.Checkbutton(tk, text='Discord Rich Presence',variable=discord).pack()
+perfReportEnd("preLaunchergameLoading")
 tk.mainloop()
 del tk
-fen = pygame.display.set_mode((options["fen"]["width"], options["fen"]["height"]),DOUBLEBUF) # On définit la fenêtre à la taille indiquée dans le fichier config
+perfReport("gameLoading")
+fen = pygame.display.set_mode((options["fen"]["width"], options["fen"]["height"]),DOUBLEBUF | RESIZABLE) # On définit la fenêtre à la taille indiquée dans le fichier config
 pygame.display.set_caption("Zeldo")
 if(sys.platform == "linux"):
     icon = pygame.image.load("assets/Logo.png") # le logo du jeu
@@ -50,12 +60,12 @@ pygame.display.set_icon(icon)
 pygame.event.set_allowed([QUIT, KEYDOWN, KEYUP,MOUSEBUTTONUP,MOUSEBUTTONDOWN]) # On n'active pas tous les évènements pour gagner un peu en performance
 clock = pygame.time.Clock() # la clock qui permet de gérer les FPS (stonks)
 from init import * # On importe le fichier init ce qui a pour effet de lancer l'initialisation du jeu
-if("multiplayer" in sys.argv): # Si multiplayer est dans les argv (Example : le programme est lancé avec "python main.py multiplayer")
+"""if("multiplayer" in sys.argv): # Si multiplayer est dans les argv (Example : le programme est lancé avec "python main.py multiplayer")
     print("Mode multijoueur enclenché")
     map = cmap.multiMap(Tile,sys.argv) # gestion différente de la map qui est importée et actualisée depuis le serveur
 else:
     map = cmap.Map(Tile,sys.argv)
-classes.mobs.start(Tile,map)
+classes.mobs.start(Tile,map)"""
 import pypresence # Le module qui gère l'interaction avec Discord
 def event_test(a): # Event quand on clique sur "rejoindre" sur Discord (non utilisé)
     print(f"Yeaaaaaaaah j'ai eu {a} c'est trop cool")
@@ -66,7 +76,7 @@ if(discord.get() == 1): # Si la case Discord est cochée
         if(multi.get() == 1): # Si le multijoueur est coché
             dPresence.update(start=time.time(),state="Dans une partie multijoueur",details="Pseudo: {}".format(pseudo.get()),large_image="logo",small_image="perso",party_id="ensah",join="mamamia")
         else:
-            dPresence.update(start=time.time(),state="En solo",details="Pseudo: {}".format(pseudo.get()),large_image="logo",small_image="perso")
+            dPresence.update(start=time.time(),state=f"En solo sur map {mapNom.get()}",details="Pseudo: {}".format(pseudo.get()),large_image="logo",small_image="perso")
         dClient = pypresence.Client("823840156939190292")
         dClient.start()
         dClient.register_event("ACTIVITY_JOIN", event_test, args={})
@@ -102,13 +112,21 @@ day_tick = 0 # Pour définir le jour et la nuit en comptant les ticks
 going = 1 # à 1 le temps augmente à -1 il diminue
 facing = "south" # De quel côté le personnage regarde
 openinvs = [] # liste des inventaires ouverts
+zoom = 1.0
+debug = False
+lastWalk = time.time()
+maxFPSInt = 60
+chatOpen = False
+chatString = ""
 varToBordel(options,player)
 if(multi.get() == 1): # Si multiplayer est dans les argv (Example : le programme est lancé avec "python main.py multiplayer")
     print("Mode multijoueur enclenché")
     map = cmap.multiMap(Tile,sys.argv,player,pseudo) # gestion différente de la map qui est importée et actualisée depuis le serveur
 else:
     map = cmap.NewMap(Tile,sys.argv,mapNom.get())
+perfReportEnd("gameLoading")
 while playing: # tant que le joueur joue on continue la boucle du jeu
+    perfReport("frame")
     lastTime = time.time()
     placetick +=1
     day_tick += going
@@ -116,6 +134,7 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
         going = -going # going est défini à son inverse
     fen.fill((255,255,255)) # On met un fill blanc tout derrière
     speed = Tile.tiles[int(map.gm(int(player.x),int(player.y))//1)].speed # On récupère la vitesse de la case qui va servir de multiplicateur
+    perfReport("events")
     for event in pygame.event.get(): # les évènements
         if event.type == pygame.MOUSEBUTTONUP:
             if(event.button == 2): # Si c'est un clic molette
@@ -123,6 +142,9 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
             if(event.button == 1):
                 if(breaking):
                     breaking = False
+        if(event.type == MOUSEWHEEL):
+            #pass
+            zoom += event.y/20
         if event.type == pygame.MOUSEBUTTONDOWN:
             if(event.button == 1):
                 dropped_this_tick = False
@@ -301,7 +323,26 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
         if event.type == pygame.QUIT: # croix rouge
             playing = False # On met à False donc la boucle s'arrête et le jeu se ferme
             print(tot/n*1000) # On affiche le temps moyen pour une frame
-        if event.type == pygame.KEYDOWN: # Touche pressée
+        if event.type == pygame.KEYDOWN and chatOpen:
+            if event.key == K_ESCAPE:
+                chatOpen = False
+            if event.key == K_BACKSPACE:
+                chatString = chatString[:-1]
+            elif event.key == K_RETURN:
+                chatOpen = False
+                # PARSE COMMAND
+                cmd = chatString.split(" ")
+                if(cmd[0] == "give"):
+                    if(cmd[1] in Item.nameToNumber and int(cmd[2]) > 0):
+                        inventory.add(cmd[1],int(cmd[2]))
+                if(cmd[0] == "setfps"):
+                    maxFPSInt = int(cmd[1])
+                chatString = ""
+            else:
+                chatString += event.unicode
+        if event.type == pygame.KEYDOWN and not chatOpen: # Touche pressée
+            if(event.key == 1073741882): # F1
+                debug = not debug
             if event.key == K_z:
                 yspeed = -1  # Vers le haut
                 facing = "north"
@@ -320,7 +361,11 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                 invOpen = not invOpen # On ouvre l'inventaire principal en mettant en pause cette fonction
             if event.key == K_c:
                 fight.main(fen)
+            if event.key == K_t:
+                chatOpen = True
             if event.key == K_g: # Sauvegarde de la carte
+                pass
+                """
                 jzon = open("map.json",'w') # On charge le fichier map
                 conversion = [] # Pas utile d'expliquer mais on convertit si les tiles ont changées
                 for i in Tile.tiles:
@@ -331,17 +376,27 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                 maps = [conversion,map.map,map.surmap]
                 jzon.write(json.dumps(maps))
                 print("Saved !")
+                """
             if event.key == K_o: # Pour tourner une tile compatible (Attention provoque un crash si pas déclarée comme tournable)
                 if(editorActivated):
                     x,y = pygame.mouse.get_pos()
-                    rx = (x-(options["fen"]["width"]/2)+player.x*32)//32
-                    ry = (y-(options["fen"]["height"]/2)+player.y*32)//32 # On fait des calculs pour trouver quelle case est cliquée
+                    rx = int((x-(options["fen"]["width"]/2)+player.x*32)//32)
+                    ry = int((y-(options["fen"]["height"]/2)+player.y*32)//32) # On fait des calculs pour trouver quelle case est cliquée
+                    state = map.getStateObject("map",rx,ry)
+                    if("rotID" in state):
+                        if(state["rotID"] < state["maxrotID"]):
+                            state["rotID"] += 1
+                        else:
+                            state["rotID"] = 0
+                        map.setStateObject("map",rx,ry,state)
+                    """
                     rot = int(map.gm(int(rx),int(ry))%1*10)
                     print(rot+1)
                     if(rot == 3):
                         map.modify(int(rx),int(ry),map.gm(int(rx),int(ry)) - 0.3)
                     else:
                         map.modify(int(rx),int(ry),map.gm(int(rx),int(ry)) + 0.1)
+                    """
             if event.key == K_y: # Ouvre le menu tkinter pour l'éditeur
                 editorActivated = True
                 tk = tkinter.Tk()
@@ -352,6 +407,36 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                 tkinter.Button(tk,text="Page suivante",command=partial(next,tk,page,Tile.tiles,id)).pack()
                 tkinter.Button(tk,text="Page précédente",command=partial(past,tk,page,Tile.tiles,id)).pack()
                 tk.mainloop()
+            if(event.key == K_ESCAPE):
+                tk = tkinter.Tk()
+                tkinter.Label(tk,text="Zeldo Options").pack()
+                fps = tkinter.LabelFrame(tk,text="FPS max")
+                fpsmax = tkinter.StringVar()
+                tkinter.Spinbox(fps,textvariable=fpsmax,values=(maxFPSInt,30,60,75,120)).pack()
+                fps.pack()
+                size = tkinter.LabelFrame(tk,text="Résolution")
+                sizeString = tkinter.StringVar()
+                w,h = options["fen"]["width"],options["fen"]["height"]
+                tkinter.Spinbox(size,textvariable=sizeString,values=(f"{w}x{h}","1920x1080","1080x720")).pack()
+                size.pack()
+                tk.mainloop()
+                del tk
+                try:
+                    maxFPSInt = int(fpsmax.get())
+                except:
+                    maxFPSInt = 60
+                try:
+                    w,h = sizeString.get().split("x")
+                    print(w)
+                    print(h)
+                    options["fen"]["width"] = int(w)
+                    options["fen"]["height"] = int(h)
+                    fen = pygame.display.set_mode((options["fen"]["width"], options["fen"]["height"]),DOUBLEBUF | RESIZABLE)
+                except:
+                    print("uwu")
+                    options["fen"]["width"] = 1080
+                    options["fen"]["height"] = 720
+                    fen = pygame.display.set_mode((options["fen"]["width"], options["fen"]["height"]),DOUBLEBUF | RESIZABLE)
             if event.key == K_j:
                 tk = tkinter.Tk()
                 tkinter.Button(tk,text="New Game",command=partial(join,tk,"newGame",map)).pack()
@@ -381,41 +466,64 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                 xspeed = 0
             if event.key == K_d:
                 xspeed = 0
+        if event.type == pygame.VIDEORESIZE:
+            options["fen"]["width"] = event.w
+            options["fen"]["height"] = event.h
+            fen = pygame.display.set_mode((options["fen"]["width"], options["fen"]["height"]),DOUBLEBUF | RESIZABLE)
+    perfReportEnd("events")
+    perfReport("collisions")
+    deltaWalk = time.time() - lastWalk
+    lastWalk = time.time()
+    coef = deltaWalk/(1/75)
     if(noclip):
-        player.x+=xspeed*speed
-        player.y+=yspeed*speed
+        player.x+=xspeed*speed*coef
+        player.y+=yspeed*speed*coef
         #print(Tile.tiles[map[int((player.x*32+10)//32)][int(floor(player.y))]].doPass,Tile.tiles[surmap[int((player.x*32+10)//32)][int(floor(player.y))]].doPass)
     else:
         try:
             if(xspeed == 1 and (Tile.tiles[int(map.gs(int((player.x*32+10)//32),int(floor(player.y)))//1)].doPass or Tile.tiles[int(map.gs(int((player.x*32+10)//32),int(floor(player.y)))//1)].needToPass in Item.items[Item.nameToNumber[inventory.tab[0][7].item]].effects) and (Tile.tiles[int(map.gm(int((player.x*32+10)//32),int(floor(player.y)))//1)].doPass or Tile.tiles[int(map.gm(int((player.x*32+10)//32),int(floor(player.y)))//1)].needToPass in Item.items[Item.nameToNumber[inventory.tab[0][7].item]].effects)):
-                player.x+=xspeed*speed
+                player.x+=xspeed*speed*coef
             if(xspeed == -1 and (Tile.tiles[int(map.gs(int((player.x*32-10)//32),int(floor(player.y)))//1)].doPass or Tile.tiles[int(map.gs(int((player.x*32-10)//32),int(floor(player.y)))//1)].needToPass in Item.items[Item.nameToNumber[inventory.tab[0][7].item]].effects) and (Tile.tiles[int(map.gm(int((player.x*32-10)//32),int(floor(player.y)))//1)].doPass or Tile.tiles[int(map.gm(int((player.x*32-10)//32),int(floor(player.y)))//1)].needToPass in Item.items[Item.nameToNumber[inventory.tab[0][7].item]].effects)):
-                player.x+=xspeed*speed
+                player.x+=xspeed*speed*coef
             if(yspeed == 1 and (Tile.tiles[int(map.gs(int(floor(player.x)),int((player.y*32+10)//32))//1)].doPass or Tile.tiles[int(map.gs(int(floor(player.x)),int((player.y*32+10)//32))//1)].needToPass in Item.items[Item.nameToNumber[inventory.tab[0][7].item]].effects) and (Tile.tiles[int(map.gm(int(floor(player.x)),int((player.y*32+10)//32))//1)].doPass or Tile.tiles[int(map.gm(int(floor(player.x)),int((player.y*32+10)//32))//1)].needToPass in Item.items[Item.nameToNumber[inventory.tab[0][7].item]].effects)):
-                player.y+=yspeed*speed
+                player.y+=yspeed*speed*coef
             if(yspeed == -1 and (Tile.tiles[int(map.gs(int(floor(player.x)),int((player.y*32-10)//32))//1)].doPass or Tile.tiles[int(map.gs(int(floor(player.x)),int((player.y*32-10)//32))//1)].needToPass in Item.items[Item.nameToNumber[inventory.tab[0][7].item]].effects) and (Tile.tiles[int(map.gm(int(floor(player.x)),int((player.y*32-10)//32))//1)].doPass or Tile.tiles[int(map.gm(int(floor(player.x)),int((player.y*32-10)//32))//1)].needToPass in Item.items[Item.nameToNumber[inventory.tab[0][7].item]].effects)):
-                player.y+=yspeed*speed
+                player.y+=yspeed*speed*coef
         except:
             if(xspeed == 1 and Tile.tiles[int(map.gs(int((player.x*32+10)//32),int(floor(player.y)))//1)].doPass and Tile.tiles[int(map.gm(int((player.x*32+10)//32),int(floor(player.y)))//1)].doPass):
-                player.x+=xspeed*speed
+                player.x+=xspeed*speed*coef
             if(xspeed == -1 and Tile.tiles[int(map.gs(int((player.x*32-10)//32),int(floor(player.y)))//1)].doPass and Tile.tiles[int(map.gm(int((player.x*32-10)//32),int(floor(player.y)))//1)].doPass):
-                player.x+=xspeed*speed
+                player.x+=xspeed*speed*coef
             if(yspeed == 1 and Tile.tiles[int(map.gs(int(floor(player.x)),int((player.y*32+10)//32))//1)].doPass and Tile.tiles[int(map.gm(int(floor(player.x)),int((player.y*32+10)//32))//1)].doPass):
-                player.y+=yspeed*speed
+                player.y+=yspeed*speed*coef
             if(yspeed == -1 and Tile.tiles[int(map.gs(int(floor(player.x)),int((player.y*32-10)//32))//1)].doPass and Tile.tiles[int(map.gm(int(floor(player.x)),int((player.y*32-10)//32))//1)].doPass):
-                player.y+=yspeed*speed
+                player.y+=yspeed*speed*coef
+    perfReportEnd("collisions")
     if(editorActivated and editor_click):
         x,y = pygame.mouse.get_pos()
         rx = (x-(options["fen"]["width"]/2)+player.x*32)//32
         ry = (y-(options["fen"]["height"]/2)+player.y*32)//32
         if(Tile.tiles[id[0]].type == "surmap"):
             map.surmodify(int(rx),int(ry),id[0])
+            if(Tile.tiles[id[0]].multiTile):
+                state = {}
+                state["rotID"] = 0
+                state["maxrotID"] = len(Tile.tiles[id[0]].textures)-1
+                print(state)
+                map.setStateObject("surmap",rx,ry,state)
         else:
             map.modify(int(rx),int(ry),id[0])
-    col = int(options["fen"]["height"]//32+3)
-    lin = int(options["fen"]["width"]//32+3)
-    xmin = player.x*32-(options["fen"]["width"]/2)+32
-    ymin = player.y*32-(options["fen"]["height"]/2)+32
+            if(Tile.tiles[id[0]].multiTile):
+                state = {}
+                state["rotID"] = 0
+                state["maxrotID"] = len(Tile.tiles[id[0]].textures)-1
+                print(state)
+                map.setStateObject("map",int(rx),int(ry),state)
+    perfReport("drawMap")
+    col = int(options["fen"]["height"]*(1/zoom)//32+3)
+    lin = int(options["fen"]["width"]*(1/zoom)//32+3)
+    xmin = player.x*32-(options["fen"]["width"]/2)*(1/zoom)+32
+    ymin = player.y*32-(options["fen"]["height"]/2)*(1/zoom)+32
     filter = pygame.surface.Surface((options["fen"]["width"], options["fen"]["height"]))
     lumiere = floor(day_tick/36000*150)
     filter.fill((lumiere,lumiere,lumiere))
@@ -439,12 +547,13 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                         filter.blit(light,((j)*32-xc-50+32,(i)*32-yc-50+32))
                         filter.blit(light,((j)*32-xc-50,(i)*32-yc-50+32))"""
                     if(case.multiTile):
-                        xy = int(yz+xz)
-                        texture = case.textures[xy%len(case.textures)]
-                        texture = texture[0]
+                        #xy = int(yz+xz)
+                        texture = case.textures[map.getStateObject("map",int(xz-1),int(yz-1))["rotID"]]
+                        #texture = texture[0]
                     else:
                         texture = case.texture
-                    fen.blit(texture,((j)*32-xc,(i)*32-yc))
+                    #texture2 = pygame.transform.scale(texture,(32*zoom+1,32*zoom+1))
+                    fen.blit(texture,((j)*32*zoom-xc*zoom,(i)*32*zoom-yc*zoom))
                 else:
                     rot = int(map.gm(int(xz-1),int(yz-1))%1*10)
                     #print(rot)
@@ -462,16 +571,23 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                     fen.blit(texture,((j)*32-xc,(i)*32-yc))
                 if(Tile.tiles[map.gs(int(xz-1),int(yz-1))].name != "nada"):
                     try:
-                        texture = Tile.tiles[map.gs(int(xz-1),int(yz-1))].texture
+                        
                         case = Tile.tiles[map.gs(int(xz-1),int(yz-1))]
                         if(case.lightness == 1):
                             pygame.draw.circle(filter,(0, 0, 0),((j)*32-xc+16,(i)*32-yc+16),64)
+                        if(case.multiTile):
+                            #xy = int(yz+xz)
+                            texture = case.textures[map.getStateObject("map",int(xz-1),int(yz-1))["rotID"]]
+                        else:
+                            texture = Tile.tiles[map.gs(int(xz-1),int(yz-1))].texture
                     except AttributeError:
                         texture = Tile.tiles[0].texture
-                    fen.blit(texture,((j)*32-xc,(i)*32-yc))
+                    #texture2 = pygame.transform.scale(texture,(32*zoom+1,32*zoom+1))
+                    fen.blit(texture,((j)*32*zoom-xc*zoom,(i)*32*zoom-yc*zoom))
             x+=32
         x = xmin
         y+=32
+    perfReportEnd("drawMap")
     if(facing == "south"):
         fen.blit(player.texture,(options["fen"]["width"]/2-16,options["fen"]["height"]/2-16))
         try:
@@ -550,28 +666,31 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
         s = pygame.Surface((32,32)).convert_alpha()
         s.fill((r,0,0,100))
         fen.blit(s,(x,y))
-    classes.mobs.draw_vache(fen,player,cmap,Tile,options)
-    classes.mobs.draw_vache(fen,player,cmap,Tile,options)
-    classes.mobs.draw_vache(fen,player,cmap,Tile,options)
+    #classes.mobs.draw_vache(fen,player,cmap,Tile,options)
+    #classes.mobs.draw_vache(fen,player,cmap,Tile,options)
+    #classes.mobs.draw_vache(fen,player,cmap,Tile,options)
     
 
     img = font.render('VERSION ALPHA - Zeldo + EDITOR - Projet NSI', True, (255,255,255))
     fen.blit(img, (20, 32))
-    img = font.render('PosX: {}'.format(player.x), True, (255,255,255))
-    fen.blit(img, (20, 64))
-    img = font.render('PosY: {}'.format(player.y), True, (255,255,255))
-    fen.blit(img, (20, 96))
-    FPS = str(int(clock.get_fps()))
-    img = font.render('FPS: {}'.format(FPS), True, (255,255,255))
-    fen.blit(img, (20, 128))
-    img = font.render('Server: {}'.format(map.getServer()), True, (255,255,255))
-    fen.blit(img, (20, 160))
-    img = font.render('Dragged Item: {}'.format(dragged_Item), True, (255,255,255))
-    fen.blit(img, (20, 224))
-    img = font.render('Dragged Item Number: {}'.format(dragged_Item_count), True, (255,255,255))
-    fen.blit(img, (20, 256))
-    img = font.render('No clip: {}'.format(noclip), True, (255,255,255))
-    fen.blit(img, (20, 256+32))
+    if(debug):
+        img = font.render('PosX: {}'.format(player.x), True, (255,255,255))
+        fen.blit(img, (20, 64))
+        img = font.render('PosY: {}'.format(player.y), True, (255,255,255))
+        fen.blit(img, (20, 96))
+        FPS = str(int(clock.get_fps()))
+        img = font.render('FPS: {}/{}'.format(FPS,maxFPSInt), True, (255,255,255))
+        fen.blit(img, (20, 128))
+        img = font.render('Server: {}'.format(map.getServer()), True, (255,255,255))
+        fen.blit(img, (20, 160))
+        img = font.render('Dragged Item: {}'.format(dragged_Item), True, (255,255,255))
+        fen.blit(img, (20, 224))
+        img = font.render('Dragged Item Number: {}'.format(dragged_Item_count), True, (255,255,255))
+        fen.blit(img, (20, 256))
+        img = font.render('No clip: {}'.format(noclip), True, (255,255,255))
+        fen.blit(img, (20, 256+32))
+        img = font.render('Zoom {}'.format(zoom), True, (255,255,255))
+        fen.blit(img, (20, 256+64))
     if(going < 0):
         hour = (36000-day_tick)//3000
         temp = (36000-day_tick)-(hour*3000)
@@ -581,13 +700,38 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
         temp = day_tick-(hour*3000)
         minute = floor(temp/3000*60)
         hour+=12
-    img = font.render('Time: {}h{}'.format(hour,minute), True, (255,255,255))
-    fen.blit(img, (20, 192))
+    if(debug):
+        img = font.render('Time: {}h{}'.format(hour,minute), True, (255,255,255))
+        fen.blit(img, (20, 192))
+    if(debug):
+        pygame.draw.line(fen,(51,51,51),(50,options["fen"]["height"]-20-(1/75)*3000),(350,options["fen"]["height"]-20-(1/75)*3000))
+        framesTimes = getReport("frame")[-100:]
+        j = 0
+        for i in framesTimes:
+            f = 1/i
+            if(f >= 70):
+                c = (0,255,0)
+            elif(f >= 59):
+                c = (252, 186, 3)
+            else:
+                c = (255,0,0)
+            pygame.draw.line(fen,c,(50+j*3,options["fen"]["height"]-20),(50+j*3,options["fen"]["height"]-20-i*3000),width=3)
+            j+=1
+    if(chatOpen):
+        img = font.render(chatString, True, (255,255,255))
+        w,h = img.get_size()
+        sur = pygame.surface.Surface((w+10,h+10))
+        sur.fill((51,51,51))
+        sur.blit(img,(5,5))
+        fen.blit(sur, (20, options["fen"]["height"]-48))
     pygame.display.flip()
     #os.system("pause")
     tot += (time.time() - lastTime)
     n+= 1
-    clock.tick(75)
+    perfReportEnd("frame")
+    clock.tick(maxFPSInt)
 
-
+printReports()
 pygame.quit()
+logFile.close()
+logFileError.close()

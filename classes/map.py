@@ -5,6 +5,7 @@ import time
 import copy
 import pygame
 import os
+from classes.bordel import *
 from perlin_noise import PerlinNoise
 noise = PerlinNoise(octaves=0.1, seed=648325)
 others = []
@@ -151,7 +152,7 @@ class multiMap:
             fen.blit(img, (rx, ry-8))
     def getServer(self):
         return multiMap.serverName
-chunkSize = 32
+chunkSize = 16
 class NewMap:
     Map = {}
     loadedChunks = []
@@ -197,9 +198,14 @@ class NewMap:
         NewMap.Map[(i//chunkSize,j//chunkSize)]["tiles"]["surmap"][i%chunkSize][j%chunkSize] = self.Tile.tiles[val].name
     def draw_others(self,fen,player,options):
         pass
+    def getStateObject(self,map,x,y):
+        return NewMap.Map[(x//chunkSize,y//chunkSize)]["states"][map][x%chunkSize][y%chunkSize]
+    def setStateObject(self,map,x,y,obj):
+        NewMap.Map[(x//chunkSize,y//chunkSize)]["states"][map][x%chunkSize][y%chunkSize] = obj
 def loadChunk(x,y):
     chunks = os.listdir(f"maps/{NewMap.nomMap}/chunks")
     if(f"{x};{y}.json" in chunks):
+        perfReport("loadChunk")
         f = open(f"maps/{NewMap.nomMap}/chunks/{x};{y}.json",'r')
         txt = f.read()
         unjsoned = json.loads(txt)
@@ -207,7 +213,9 @@ def loadChunk(x,y):
         NewMap.loadedChunks.append((x,y))
         NewMap.loadingChunks.remove((x,y))
         f.close()
+        perfReportEnd("loadChunk")
     else:
+        perfReport("generateChunk")
         f = open(f"maps/{NewMap.nomMap}/chunks/{x};{y}.json",'a')
         owo = {}
         lines = []
@@ -231,9 +239,19 @@ def loadChunk(x,y):
             lines.append("nada")
         for i in range(chunkSize):
             owo["tiles"]["surmap"].append(copy.copy(lines))
+        owo["states"] = {}
+        owo["states"]["map"] = []
+        owo["states"]["surmap"] = []
+        lines = []
+        for i in range(chunkSize):
+            lines.append({})
+        for i in range(chunkSize):
+            owo["states"]["map"].append(copy.copy(lines))
+            owo["states"]["surmap"].append(copy.copy(lines))
         jsoned = json.dumps(owo)
         NewMap.Map[(x,y)] = owo
         NewMap.loadedChunks.append((x,y))
         NewMap.loadingChunks.remove((x,y))
         f.write(jsoned)
         f.close()
+        perfReportEnd("generateChunk")

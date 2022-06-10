@@ -1,0 +1,73 @@
+pygame 2.1.2 (SDL 2.0.18, Python 3.9.7)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+arbre.yml
+Breaking
+bananier.yml
+Breaking
+chemincaillouxns.yml
+chemincaillouxwe.yml
+cocotier.yml
+Breaking
+craftingtable.yml
+Breaking
+darkeau.yml
+eau+sable.yml
+eau.yml
+gazon.yml
+lave.yml
+moai.yml
+Breaking
+nada.yml
+palmier.yml
+Breaking
+pierre.yml
+Breaking
+pommier.yml
+Breaking
+sable+eau.yml
+sable.yml
+sableau.yml
+tombe.yml
+Breaking
+torch.yml
+Breaking
+vide.yml
+arbre , id:0
+Bananier , id:1
+Chemin de cailloux NS , id:2
+Chemin de cailloux WE , id:3
+Cocotier , id:4
+craftingtable , id:5
+darkeau , id:6
+eau+sable , id:7
+eau , id:8
+gazon , id:9
+lave , id:10
+moai , id:11
+nada , id:12
+Palmier , id:13
+Pierre , id:14
+pommier , id:15
+sable+eau , id:16
+sable , id:17
+sableau , id:18
+Tombe , id:19
+torche , id:20
+vide , id:21
+banana.yml
+coconut.yml
+firebabouche.yml
+pomme.yml
+roche.yml
+waterbabouche.yml
+wood.yml
+banane , id:0
+coconut , id:1
+Fire Babouche , id:2
+pomme , id:3
+roche , id:4
+Water Babouche , id:5
+wood , id:6
+void
+void
+1
