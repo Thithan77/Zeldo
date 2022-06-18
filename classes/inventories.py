@@ -90,3 +90,4 @@ def open_inventory(fen,inventory,options,player,Tile,map):
 invs = {}
 from classes.craftingTableInv import *
 invs["craftingTableInv"] = craftingTableInv
+invs["chestInv"] = chestInv

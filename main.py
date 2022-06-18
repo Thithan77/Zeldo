@@ -22,7 +22,6 @@ from math import *
 import classes.player as pl# On importe la classe qui gère le joueur
 import classes.map as cmap # La classe qui gère la map
 from functools import partial # Une fonction utile mais flemme d'expliquer pourquoi
-
 import classes.inventories as inventories # La classe qui gère les inventaires
 import classes.mobs # Les mobs (c'est géré par Léo je lui fait confiance owo)
 import classes.fight as fight #Le système de combat (c'est géré par Loïc OwO)
@@ -33,14 +32,31 @@ except:
     print("Erreur dans le chargement du fichier de configuration (existe-t-il ?)")
     sys.exit()
 # Petit launcher pour récupérer les informations de lancement
+
 tk = tkinter.Tk() # On créé la fenêtre tkinter
 tkinter.Label(tk,text="Zeldo Launcher").pack()
 pseudo = tkinter.StringVar()
-tkinter.Entry(tk,textvariable=pseudo).pack()
+pseudolabel = tkinter.LabelFrame(tk,text="Pseudo")
+tkinter.Entry(pseudolabel,textvariable=pseudo).pack()
+pseudolabel.pack()
 mapNom = tkinter.StringVar()
-tkinter.Entry(tk,textvariable=mapNom).pack()
+mapnomlabel = tkinter.LabelFrame(tk,text="Map")
+tkinter.Spinbox(mapnomlabel,textvariable=mapNom,values=os.listdir("maps/")).pack()
+#tkinter.Entry(mapnomlabel,textvariable=mapNom).pack()
+mapnomlabel.pack()
+multilabel = tkinter.LabelFrame(tk,text="Multijoueur")
 multi = tkinter.IntVar()
-tkinter.Checkbutton(tk, text='Multiplayer',variable=multi)#.pack()
+def hideMulti():
+    if(multi.get() == 1):
+        serverlabel.pack()
+    else:
+        serverlabel.pack_forget()
+tkinter.Checkbutton(multilabel, text='Multiplayer',variable=multi,command=hideMulti).pack()
+multilabel.pack()
+serverlabel = tkinter.LabelFrame(multilabel,text="IP serveur")
+serverinfo = tkinter.StringVar()
+tkinter.Entry(serverlabel,textvariable=serverinfo).pack()
+
 discord = tkinter.IntVar()
 tkinter.Checkbutton(tk, text='Discord Rich Presence',variable=discord).pack()
 perfReportEnd("preLaunchergameLoading")
@@ -120,8 +136,8 @@ chatOpen = False
 chatString = ""
 varToBordel(options,player)
 if(multi.get() == 1): # Si multiplayer est dans les argv (Example : le programme est lancé avec "python main.py multiplayer")
-    print("Mode multijoueur enclenché")
-    map = cmap.multiMap(Tile,sys.argv,player,pseudo) # gestion différente de la map qui est importée et actualisée depuis le serveur
+    print(f"Mode multijoueur enclenché ip : {serverinfo.get()}")
+    map = cmap.NewMultiMap(Tile,sys.argv,serverinfo.get(),player,pseudo) # gestion différente de la map qui est importée et actualisée depuis le serveur
 else:
     map = cmap.NewMap(Tile,sys.argv,mapNom.get())
 perfReportEnd("gameLoading")
@@ -297,7 +313,6 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                     breaking = True
                     timeBreaking = time.time()
                 else:
-                    print(Tile.tiles[int(map.gs(rx,ry))].openinvtxt)
                     alreadyopen = False
                     index = 0
                     for i in openinvs:
@@ -305,15 +320,52 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                             alreadyopen = True
                             openatindex = index
                         index+=1
+                    state = map.getStateObject("map",rx,ry)
                     if(not alreadyopen):
-                        newinv = {}
-                        newinv["x"] = rx
-                        newinv["y"] = ry
-                        print(newinv["x"])
-                        newinv["class"] = Tile.tiles[int(map.gs(rx,ry))].openinv(InventoryTile)
+                        if("storage" in state):
+                            #newinv = state["storage"]
+                            newinv = {}
+                            newinv["x"] = rx
+                            newinv["y"] = ry
+                            newinv["class"] = Tile.tiles[int(map.gs(rx,ry))].openinv(InventoryTile)
+                            for i in range(len(state["storage"])):
+                                for j in range(len(state["storage"][i])):
+                                    newinv["class"].tab[i][j].item = state["storage"][i][j]["item"]
+                                    newinv["class"].tab[i][j].count = state["storage"][i][j]["count"]
+                        else:
+                            newinv = {}
+                            newinv["x"] = rx
+                            newinv["y"] = ry
+                            newinv["class"] = Tile.tiles[int(map.gs(rx,ry))].openinv(InventoryTile)
+                            state["storage"] = []
+                            for i in range(len(newinv["class"].tab)):
+                                state["storage"].append([])
+                                for j in range(len(newinv["class"].tab[i])):
+                                    state["storage"][i].append({})
+                                    if(newinv["class"].tab[i][j].acceptItem):
+                                        state["storage"][i][j] = {"item":newinv["class"].tab[i][j].item,"count":newinv["class"].tab[i][j].count}
+                                    else:
+                                        state["storage"][i][j] = {"item":None,"count":0}
+                            """for i in newinv["class"].tab:
+                                for j in i:
+                                    if(j.acceptItem):
+                                        print(j.item," ",j.count)
+                                        s"""
+                            #state["storage"] = [{"item":i.item,"count":i.count} for i in newinv]
                         openinvs.append(newinv)
                     else:
+                        state["storage"] = []
+                        for i in range(len(openinvs[openatindex]["class"].tab)):
+                            state["storage"].append([])
+                            for j in range(len(openinvs[openatindex]["class"].tab[i])):
+                                state["storage"][i].append({})
+                                if(openinvs[openatindex]["class"].tab[i][j].acceptItem):
+                                    state["storage"][i][j] = {"item":openinvs[openatindex]["class"].tab[i][j].item,"count":openinvs[openatindex]["class"].tab[i][j].count}
+                                else:
+                                    state["storage"][i][j] = {"item":None,"count":0}
+                        #state["storage"] = openinvs[openatindex]
                         del openinvs[openatindex]
+                    map.setStateObject("map",rx,ry,state)
             inv = pygame.Rect(options["fen"]["width"]-32*9,options["fen"]["height"]-32,9*32,32)
             if(inv.collidepoint(pygame.mouse.get_pos())):
                 x,y = pygame.mouse.get_pos()
@@ -509,7 +561,7 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                 state = {}
                 state["rotID"] = 0
                 state["maxrotID"] = len(Tile.tiles[id[0]].textures)-1
-                print(state)
+                #print(state)
                 map.setStateObject("surmap",rx,ry,state)
         else:
             map.modify(int(rx),int(ry),id[0])
@@ -517,7 +569,7 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                 state = {}
                 state["rotID"] = 0
                 state["maxrotID"] = len(Tile.tiles[id[0]].textures)-1
-                print(state)
+                #print(state)
                 map.setStateObject("map",int(rx),int(ry),state)
     perfReport("drawMap")
     col = int(options["fen"]["height"]*(1/zoom)//32+3)
@@ -543,9 +595,9 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                     if(case.lightness == 1):
                         pygame.draw.circle(filter,(0, 0, 0),((j)*32-xc+16,(i)*32-yc+16),64)
                         """filter.blit(light,((j)*32-xc-50,(i)*32-yc-50))
-                        filter.blit(light,((j)*32-xc-50+32,(i)*32-yc-50))
-                        filter.blit(light,((j)*32-xc-50+32,(i)*32-yc-50+32))
-                        filter.blit(light,((j)*32-xc-50,(i)*32-yc-50+32))"""
+                            filter.blit(light,((j)*32-xc-50+32,(i)*32-yc-50))
+                            filter.blit(light,((j)*32-xc-50+32,(i)*32-yc-50+32))
+                            filter.blit(light,((j)*32-xc-50,(i)*32-yc-50+32))"""
                     if(case.multiTile):
                         #xy = int(yz+xz)
                         texture = case.textures[map.getStateObject("map",int(xz-1),int(yz-1))["rotID"]]
@@ -575,6 +627,10 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
                         case = Tile.tiles[map.gs(int(xz-1),int(yz-1))]
                         if(case.lightness == 1):
                             pygame.draw.circle(filter,(0, 0, 0),((j)*32-xc+16,(i)*32-yc+16),64)
+                            """filter.blit(light,((j)*32-xc-50,(i)*32-yc-50))
+                                filter.blit(light,((j)*32-xc-50+32,(i)*32-yc-50))
+                                filter.blit(light,((j)*32-xc-50+32,(i)*32-yc-50+32))
+                                filter.blit(light,((j)*32-xc-50,(i)*32-yc-50+32))"""
                         if(case.multiTile):
                             #xy = int(yz+xz)
                             texture = case.textures[map.getStateObject("map",int(xz-1),int(yz-1))["rotID"]]
@@ -691,6 +747,8 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
         fen.blit(img, (20, 256+32))
         img = font.render('Zoom {}'.format(zoom), True, (255,255,255))
         fen.blit(img, (20, 256+64))
+        img = font.render('Chunks loaded {}'.format(map.chunksLoaded()), True, (255,255,255))
+        fen.blit(img, (20, 256+96))
     if(going < 0):
         hour = (36000-day_tick)//3000
         temp = (36000-day_tick)-(hour*3000)
@@ -730,7 +788,7 @@ while playing: # tant que le joueur joue on continue la boucle du jeu
     n+= 1
     perfReportEnd("frame")
     clock.tick(maxFPSInt)
-
+map.saveAllChunks()
 printReports()
 pygame.quit()
 logFile.close()

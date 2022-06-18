@@ -3,17 +3,20 @@ import socket
 from _thread import *
 import time
 import copy
+from math import *
 import pygame
 import os
+import pickle
 from classes.bordel import *
 from perlin_noise import PerlinNoise
+print("Loading map file")
 noise = PerlinNoise(octaves=0.1, seed=648325)
 others = []
 def threaded_map(player,pseudo):
     global others
     while True:
         try:
-            updates = multiMap.updates
+            updates = NewMultiMap.updates
             updates.append(("pos",player.x,player.y,pseudo))
             multiMap.updates = []
             jzon = json.dumps(updates)
@@ -53,6 +56,34 @@ def threaded_map(player,pseudo):
             others = copy.copy(newothers)
         except error as e:
             print(e)
+def new_threaded_map(player,pseudo):
+    print("Thread lanché")
+    while True:
+        updates = NewMultiMap.updates
+        updates.append(("pos",player.x,player.y,pseudo))
+        NewMultiMap.updates = []
+        data = NewMultiMap.s.recv(2048*64)
+        jzon = json.loads(data.decode())
+        for u in jzon:
+            if(u[0] == "message"):
+                print(u[1])
+            elif(u[0] == "fullChunk"):
+                print(f"receveid chunk {(u[1][0],u[1][1])}")
+                NewMultiMap.Map[(u[1][0],u[1][1])] = u[2]
+                NewMultiMap.loadedChunks.append((u[1][0],u[1][1]))
+                NewMultiMap.loadingChunks.remove((u[1][0],u[1][1]))
+            elif(u[0] == "mod"):
+                if((u[1][0]//16,u[1][1]//16) in NewMultiMap.loadedChunks):
+                    NewMultiMap.Map[(u[1][0]//16,u[1][1]//16)]["tiles"]["map"][u[1][0]%chunkSize][u[1][1]%chunkSize] = NewMultiMap.Tile.tiles[u[2]].name
+            elif(u[0] == "surmod"):
+                if((u[1][0]//16,u[1][1]//16) in NewMultiMap.loadedChunks):
+                    NewMultiMap.Map[(u[1][0]//16,u[1][1]//16)]["tiles"]["surmap"][u[1][0]%chunkSize][u[1][1]%chunkSize] = NewMultiMap.Tile.tiles[u[2]].name
+            elif(u[0] == "pos"):
+                NewMultiMap.others[u[1][2]] = (u[1][0],u[1][1])
+            elif(u[0] == "ping"):
+                NewMultiMap.lastPings.append((time.time() - u[1])*1000)
+        jzon = json.dumps(updates)
+        NewMultiMap.s.send(jzon.encode())
 class Map:
     def __init__(self,Tile,argv):
         self.map = []
@@ -193,22 +224,51 @@ class NewMap:
             c = NewMap.Map[(chunkX,chunkY)]["tiles"]["surmap"][i%chunkSize][j%chunkSize]
             return self.Tile.nameToNumber[c]
     def modify(self,i,j,val):
-        NewMap.Map[(i//chunkSize,j//chunkSize)]["tiles"]["map"][i%chunkSize][j%chunkSize] = self.Tile.tiles[val].name
+        chunkX = i//chunkSize
+        chunkY = j//chunkSize
+        if((chunkX,chunkY) not in NewMap.loadedChunks):
+            if((chunkX,chunkY) not in NewMap.loadingChunks):
+                start_new_thread(loadChunk,(chunkX,chunkY))
+                NewMap.loadingChunks.append((chunkX,chunkY))
+            return
+        else:
+            NewMap.Map[(i//chunkSize,j//chunkSize)]["tiles"]["map"][i%chunkSize][j%chunkSize] = self.Tile.tiles[val].name
     def surmodify(self,i,j,val):
-        NewMap.Map[(i//chunkSize,j//chunkSize)]["tiles"]["surmap"][i%chunkSize][j%chunkSize] = self.Tile.tiles[val].name
+        chunkX = i//chunkSize
+        chunkY = j//chunkSize
+        if((chunkX,chunkY) not in NewMap.loadedChunks):
+            if((chunkX,chunkY) not in NewMap.loadingChunks):
+                start_new_thread(loadChunk,(chunkX,chunkY))
+                NewMap.loadingChunks.append((chunkX,chunkY))
+            return
+        else:
+            NewMap.Map[(i//chunkSize,j//chunkSize)]["tiles"]["surmap"][i%chunkSize][j%chunkSize] = self.Tile.tiles[val].name
     def draw_others(self,fen,player,options):
         pass
     def getStateObject(self,map,x,y):
         return NewMap.Map[(x//chunkSize,y//chunkSize)]["states"][map][x%chunkSize][y%chunkSize]
     def setStateObject(self,map,x,y,obj):
         NewMap.Map[(x//chunkSize,y//chunkSize)]["states"][map][x%chunkSize][y%chunkSize] = obj
+    def chunksLoaded(self):
+        return len(NewMap.Map)
+    def saveChunk(self,xy):
+        f = open(f"maps/{NewMap.nomMap}/chunks/{xy[0]};{xy[1]}.chunk",'wb')
+        #jsoned = json.dumps(NewMap.Map[xy])
+        #f.write(jsoned)
+        pickle.dump(NewMap.Map[xy],f)
+        f.close()
+    def saveAllChunks(self):
+        for c in NewMap.Map:
+            self.saveChunk(c)
 def loadChunk(x,y):
+    print(f"Loading chunk {x}:{y}")
     chunks = os.listdir(f"maps/{NewMap.nomMap}/chunks")
-    if(f"{x};{y}.json" in chunks):
+    if(f"{x};{y}.chunk" in chunks):
         perfReport("loadChunk")
-        f = open(f"maps/{NewMap.nomMap}/chunks/{x};{y}.json",'r')
-        txt = f.read()
-        unjsoned = json.loads(txt)
+        f = open(f"maps/{NewMap.nomMap}/chunks/{x};{y}.chunk",'rb')
+        #txt = f.read()
+        #unjsoned = json.loads(txt)
+        unjsoned = pickle.load(f)
         NewMap.Map[(x,y)] = unjsoned
         NewMap.loadedChunks.append((x,y))
         NewMap.loadingChunks.remove((x,y))
@@ -216,7 +276,8 @@ def loadChunk(x,y):
         perfReportEnd("loadChunk")
     else:
         perfReport("generateChunk")
-        f = open(f"maps/{NewMap.nomMap}/chunks/{x};{y}.json",'a')
+        print("?")
+        f = open(f"maps/{NewMap.nomMap}/chunks/{x};{y}.chunk",'wb')
         owo = {}
         lines = []
         noise = PerlinNoise(octaves=0.1, seed=abs(int(hash(NewMap.nomMap))))
@@ -248,10 +309,85 @@ def loadChunk(x,y):
         for i in range(chunkSize):
             owo["states"]["map"].append(copy.copy(lines))
             owo["states"]["surmap"].append(copy.copy(lines))
-        jsoned = json.dumps(owo)
+        #jsoned = json.dumps(owo)
         NewMap.Map[(x,y)] = owo
         NewMap.loadedChunks.append((x,y))
         NewMap.loadingChunks.remove((x,y))
-        f.write(jsoned)
+        pickle.dump(owo,f)
+        #f.write(jsoned)
         f.close()
         perfReportEnd("generateChunk")
+    print(f"Loaded chunk {x}:{y}")
+class NewMultiMap:
+    Map = {}
+    loadedChunks = []
+    loadingChunks = []
+    nomMap = "lobby"
+    updates = []
+    Tile = None
+    others = {}
+    s = None
+    lastPings = []
+    def __init__(self,Tile,argv,serverip,player,pseudo):
+        self.map = []
+        self.surmap = []
+        self.Tile = Tile
+        NewMultiMap.Tile = Tile
+        self.ip,self.port = serverip.split(":")
+        self.port = int(self.port)
+        self.font = pygame.font.SysFont(None, 14)
+        NewMultiMap.s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+        NewMultiMap.s.connect((self.ip, self.port))
+        start_new_thread(new_threaded_map,(player,pseudo.get()))
+    def getServer(self):
+        NewMultiMap.updates.append(("ping",time.time()))
+        s = 0
+        for i in NewMultiMap.lastPings[-100:]:
+            s += i
+        ping = s/100
+        return f"{self.ip}:{self.port}/{NewMultiMap.nomMap} + {floor(ping)}"
+    def gm(self,i,j):
+        chunkX = i//chunkSize
+        chunkY = j//chunkSize
+        if((chunkX,chunkY) not in NewMultiMap.loadedChunks):
+            if((chunkX,chunkY) not in NewMultiMap.loadingChunks):
+                NewMultiMap.updates.append(("askChunk",(chunkX,chunkY)))
+                NewMultiMap.loadingChunks.append((chunkX,chunkY))
+            return 21
+        else:
+            c = NewMultiMap.Map[(chunkX,chunkY)]["tiles"]["map"][i%chunkSize][j%chunkSize]
+            return self.Tile.nameToNumber[c]
+    def gs(self,i,j):
+        chunkX = i//chunkSize
+        chunkY = j//chunkSize
+        if((chunkX,chunkY) not in NewMultiMap.loadedChunks):
+            if((chunkX,chunkY) not in NewMultiMap.loadingChunks):
+                NewMultiMap.updates.append(("askChunk",(chunkX,chunkY)))
+                NewMultiMap.loadingChunks.append((chunkX,chunkY))
+            return 12
+        else:
+            c = NewMultiMap.Map[(chunkX,chunkY)]["tiles"]["surmap"][i%chunkSize][j%chunkSize]
+            return self.Tile.nameToNumber[c]
+    def modify(self,i,j,val):
+        NewMultiMap.updates.append(("mod",(i,j),val))
+    def surmodify(self,i,j,val):
+        NewMultiMap.updates.append(("surmod",(i,j),val))
+    def draw_others(self,fen,player,options):
+        for i in NewMultiMap.others:
+            dx = NewMultiMap.others[i][0]*32 - player.x*32 + options["fen"]["width"]/2
+            dy = NewMultiMap.others[i][1]*32 - player.y*32 + options["fen"]["height"]/2
+            fen.blit(player.texture,(dx-16,dy-16))
+            img = self.font.render(i, True, (255,255,255))
+            fen.blit(img, (dx-16, dy-16-8))
+    def getStateObject(self,map,x,y):
+        return NewMultiMap.Map[(x//chunkSize,y//chunkSize)]["states"][map][x%chunkSize][y%chunkSize]
+    def setStateObject(self,map,x,y,obj):
+        pass
+    def chunksLoaded(self):
+        return len(NewMultiMap.Map)
+    def saveChunk(self,xy):
+        pass
+    def saveAllChunks(self):
+        pass
+    def getPing():
+        NewMultiMap.updates.append(("ping",time.time()))

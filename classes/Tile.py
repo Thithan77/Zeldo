@@ -47,9 +47,13 @@ class Tile:
             if("rotation" in opt and opt["rotation"]):
                 self.multiTile = True
                 self.textures = []
-                for i in [(False,False),(False,True),(True,True),(True,False)]:
-                    texture = pygame.transform.flip(self.texture,i[0],i[1])
+                for i in range(4):
+                    texture = pygame.transform.rotate(self.texture,90*i)
                     self.textures.append(texture)
+                for i in [(False,False),(False,True),(True,True),(True,False)]:
+                    pass
+                    #texture = pygame.transform.flip(self.texture,i[0],i[1])
+                    #self.textures.append(texture)
             else:
                 self.multiTile = False
         else:
@@ -66,9 +70,13 @@ class Tile:
                     texture.fill((0,0,0,0))
                     texture.blit(texture2,(0,0,32,32))
                     if("rotation" in opt and opt["rotation"]):
+                        for i in range(4):
+                            textureowo = pygame.transform.rotate(texture,90*i)
+                            self.textures.append(textureowo)
+                        """
                         for i in [(False,False),(False,True),(True,True),(True,False)]:
                             textureowo = pygame.transform.flip(texture,i[0],i[1])
-                            self.textures.append(textureowo)
+                            self.textures.append(textureowo)"""
                     else:
                         self.textures.append(texture)
             else:

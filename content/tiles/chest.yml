@@ -1,0 +1,6 @@
+name : "chest"
+fileName : "moai.png"
+doPass : false
+type : "surmap"
+breakable : false
+openinv: "chestInv"

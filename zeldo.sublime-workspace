@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"load",
+				"loadedChunks"
+			],
+			[
 				"max",
 				"maxrotID"
 			],
@@ -34,10 +38,6 @@
 			[
 				"chu",
 				"chunkY"
-			],
-			[
-				"load",
-				"loadingChunks"
 			],
 			[
 				"c",
@@ -173,15 +173,24 @@
 	},
 	"file_history":
 	[
-		"/D/Thibaut/Dev/Python/Zeldo/classes/player.py",
-		"/D/Thibaut/Dev/Python/Zeldo/classes/map.py",
-		"/D/Thibaut/Dev/Python/Zeldo/classes/InventoryTile.py",
-		"/D/Thibaut/Dev/Python/Zeldo/server/server.py",
-		"/D/Thibaut/Dev/Python/Zeldo/maps/16chunck/chunks/0;-12.json",
 		"/D/Thibaut/Dev/Python/Zeldo/main.py",
-		"/D/Thibaut/Dev/Python/Zeldo/classes/bordel.py",
-		"/D/Thibaut/Dev/Python/Zeldo/.gitignore",
+		"/D/Thibaut/Dev/Python/Zeldo/maps/lobby/chunks/0;0.json",
+		"/D/Thibaut/Dev/Python/Zeldo/server/server.py",
+		"/D/Thibaut/Dev/Python/Zeldo/classes/map.py",
+		"/D/Thibaut/Dev/Python/Zeldo/server/newserver.py",
+		"/D/Thibaut/Dev/Python/Zeldo/server/map.py",
+		"/D/Thibaut/Dev/Python/Zeldo/build/main/xref-main.html",
+		"/D/Thibaut/Dev/Python/Zeldo/content/tiles/chest.yml",
+		"/D/Thibaut/Dev/Python/Zeldo/classes/craftingTableInv.py",
 		"/D/Thibaut/Dev/Python/Zeldo/init.py",
+		"/D/Thibaut/Dev/Python/Zeldo/classes/InventoryTile.py",
+		"/D/Thibaut/Dev/Python/Zeldo/maps/y/chunks/0;0.chunk",
+		"/D/Thibaut/Dev/Python/Zeldo/maps/a/chunks/0;0.json",
+		"/D/Thibaut/Dev/Python/Zeldo/maps/a/chunks/-1;-1.json",
+		"/D/Thibaut/Dev/Python/Zeldo/.gitignore",
+		"/D/Thibaut/Dev/Python/Zeldo/classes/player.py",
+		"/D/Thibaut/Dev/Python/Zeldo/maps/16chunck/chunks/0;-12.json",
+		"/D/Thibaut/Dev/Python/Zeldo/classes/bordel.py",
 		"/D/Thibaut/Dev/Python/Zeldo/maps/owo/chunks/0;0.json",
 		"/D/Thibaut/Dev/Python/Zeldo/content/items/banana.yml",
 		"/D/Thibaut/Dev/Python/Zeldo/classes/Item.py",
@@ -256,6 +265,19 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			".json",
+			"NewMap",
+			"init",
+			"Tile",
+			"map.modify",
+			"map.sm",
+			"cmap",
+			"K_ESCAPE",
+			"print",
+			"rotID",
+			"time",
+			"print",
+			"openInv",
 			"print",
 			"id",
 			"editor_click",

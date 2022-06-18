@@ -26,3 +26,12 @@ class craftingTableInv:
         self.tab[4][4] = copy.copy(InventoryTile.tiles[InventoryTile.nameToNumber["void"]])
     def add(self,what,hMany):
         print("no")
+class chestInv:
+    def __init__(self,InventoryTile):
+        self.tab = []
+        for i in range(5):
+            self.tab.append([])
+            for j in range(5):
+                self.tab[i].append(copy.copy(InventoryTile.tiles[InventoryTile.nameToNumber["storage"]]))
+    def add(self,what,hMany):
+        print("no")
